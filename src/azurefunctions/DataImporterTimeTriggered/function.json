@@ -1,0 +1,12 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "mytimer",
+      "type": "timerTrigger",
+      "direction": "in",
+      // everyday at 3am
+      "schedule": "0 0 3 * * *"
+    }
+  ]
+}
