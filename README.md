@@ -11,5 +11,32 @@ conda activate nextbike
 ## Install dependencies
 
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
+```
+
+## Deployment
+
+### Local environment
+
+In order to deploy function app locally run the following commands:
+
+```bash
+cd src/azurefunctions
+func host start
+```
+
+### Deployment to Azure Cloud
+
+Do following:
+
+1. Install [jq](https://stedolan.github.io/jq/) library.
+
+1. Set proper configuration in the `./deployment/config.sh` file.
+
+1. Run the following commands:
+
+```bash
+cd deployment
+sh 01-provision-azure-resources.sh
+sh 02-deploy-azure-functions.sh
 ```

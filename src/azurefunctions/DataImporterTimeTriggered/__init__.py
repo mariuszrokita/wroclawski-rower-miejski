@@ -4,7 +4,7 @@ import os
 
 import azure.functions as func
 
-from data.incremental_data_import import import_historic_csv_files
+from .incremental_data_import import import_historic_csv_files
 
 def main(mytimer: func.TimerRequest) -> None:
     utc_timestamp = datetime.datetime.utcnow().replace(
