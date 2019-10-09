@@ -3,6 +3,7 @@ This module contains functions to import csv files with historic records
 and to persist them in Azure Blob Storage.
 """
 
+import logging
 import os
 import requests
 
@@ -36,7 +37,7 @@ def import_historic_csv_files(url, account_name, account_key, container_name):
             # import csv file - read file's content and upload it to Azure Blob Storage
             csv = requests.get(csv_link)
             block_blob_service.create_blob_from_text(container_name, filename, csv.text)
-
+            logging.info(f"Created blob file '{filename}' in the container '{container_name}'")
 
 # if __name__ == "__main__":
 #     # configuration

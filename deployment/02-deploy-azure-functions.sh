@@ -18,11 +18,10 @@ cd ../src/azurefunctions
 func azure functionapp publish $FUNCTION_APP_NAME --build remote
 
 echo "*** STEP 4: Set environment variables... ***"
-
-historic_records_url=`jq '.Values.historic_records_url' local.settings.json`
-storage_account_name=`jq '.Values.storage_account_name' local.settings.json`
-storage_account_key=`jq '.Values.storage_account_key' local.settings.json`
-storage_container_name=`jq '.Values.storage_container_name' local.settings.json`
+historic_records_url=`jq -r '.Values.historic_records_url' local.settings.json`
+storage_account_name=`jq -r '.Values.storage_account_name' local.settings.json`
+storage_account_key=`jq -r '.Values.storage_account_key' local.settings.json`
+storage_container_name=`jq -r '.Values.storage_container_name' local.settings.json`
 
 # echo $historic_records_url
 # echo $storage_account_name
