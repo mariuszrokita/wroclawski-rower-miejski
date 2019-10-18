@@ -14,6 +14,12 @@ conda activate nextbike
 pip3 install -r requirements.txt
 ```
 
+It is also worth installing the Jupyter Notebook Extensions:
+
+```bash
+pip3 install jupyter_contrib_nbextensions && jupyter contrib nbextension install
+```
+
 ## Deployment
 
 ### Local environment
