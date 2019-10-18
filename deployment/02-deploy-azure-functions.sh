@@ -23,11 +23,6 @@ storage_account_name=`jq -r '.Values.storage_account_name' local.settings.json`
 storage_account_key=`jq -r '.Values.storage_account_key' local.settings.json`
 storage_container_name=`jq -r '.Values.storage_container_name' local.settings.json`
 
-# echo $historic_records_url
-# echo $storage_account_name
-# echo $storage_account_key
-# echo $storage_container_name
-
 az functionapp config appsettings set \
 	--name $FUNCTION_APP_NAME \
 	--resource-group $RESOURCE_GROUP \
