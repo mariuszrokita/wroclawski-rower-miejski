@@ -38,16 +38,3 @@ def import_historic_csv_files(url, account_name, account_key, container_name):
             csv = requests.get(csv_link)
             block_blob_service.create_blob_from_text(container_name, filename, csv.text)
             logging.info(f"Created blob file '{filename}' in the container '{container_name}'")
-
-# if __name__ == "__main__":
-#     # configuration
-#     historic_records_url = 'https://www.wroclaw.pl/open-data/dataset/wrmprzejazdy_data/resource_history/65b5015e-070e-41da-8852-802a86442ac5'
-#     storage_account_name = ''
-#     storage_account_key = ''
-#     storage_container_name = ''
-
-#     # run import
-#     import_historic_csv_files(historic_records_url, 
-#                             storage_account_name, 
-#                             storage_account_key, 
-#                             storage_container_name)
