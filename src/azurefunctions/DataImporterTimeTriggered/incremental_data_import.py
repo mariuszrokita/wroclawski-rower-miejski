@@ -35,6 +35,8 @@ def import_historic_csv_files(url, account_name, account_key, container_name):
         filename = os.path.basename(csv_link)
         if not filename in blobs_already_imported:
             # import csv file - read file's content and upload it to Azure Blob Storage
-            csv = requests.get(csv_link)
-            block_blob_service.create_blob_from_text(container_name, filename, csv.text)
+            r = requests.get(csv_link)
+            # change the encoding for the request content
+            r.encoding = 'utf-8'
+            block_blob_service.create_blob_from_text(container_name, filename, r.text)
             logging.info(f"Created blob file '{filename}' in the container '{container_name}'")
