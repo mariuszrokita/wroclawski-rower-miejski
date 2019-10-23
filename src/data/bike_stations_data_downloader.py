@@ -5,6 +5,11 @@ from bs4 import BeautifulSoup
 
 
 def get_bike_stations_data():
+    """Downloads and returns bike stations details (street, gps coordinates) data.
+    
+    Returns:
+    * pandas.DataFrame - returning value
+    """
     url = 'https://wroclawskirower.pl/en/stations-map/'
 
     page = requests.get(url)

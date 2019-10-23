@@ -7,9 +7,9 @@ class BlobDownloader:
         self.block_blob_service = BlockBlobService(account_name, account_key)
         self.container_name = container_name
 
-    def download_blobs_from_storage_and_save_to_folder(self, target_folder):
+    def download_blobs_and_save(self, target_folder):
         """
-        Download all blobs (CSV files) from Azure Blob Storage and save them in a target folder.
+        Downloads all blobs (CSV files) from Azure Blob Storage and saves them in a target folder.
         """
         generator = self.block_blob_service.list_blobs(self.container_name)
         blob_names = [blob.name for blob in generator]
