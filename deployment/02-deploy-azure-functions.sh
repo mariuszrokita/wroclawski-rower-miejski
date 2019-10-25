@@ -23,6 +23,7 @@ storage_account_name=`jq -r '.Values.storage_account_name' local.settings.json`
 storage_account_key=`jq -r '.Values.storage_account_key' local.settings.json`
 storage_container_name=`jq -r '.Values.storage_container_name' local.settings.json`
 bike_availability_data_url=`jq -r '.Values.bike_availability_data_url' local.settings.json`
+bike_availability_container_name=`jq -r '.Values.bike_availability_container_name' local.settings.json`
 
 az functionapp config appsettings set \
 	--name $FUNCTION_APP_NAME \
@@ -32,4 +33,5 @@ az functionapp config appsettings set \
 		storage_account_name=$storage_account_name \
 		storage_account_key=$storage_account_key \
 		storage_container_name=$storage_container_name \
-		bike_availability_data_url=$bike_availability_data_url
+		bike_availability_data_url=$bike_availability_data_url \
+		bike_availability_container_name=$bike_availability_container_name
