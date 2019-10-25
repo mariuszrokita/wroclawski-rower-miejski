@@ -49,8 +49,8 @@ class BikeStationsLocations:
 
         # Get only bike station name and coordinates. Make column names
         # clear for English-speaking audience.
-        df = df[['Nazwa stacji', 'Coordinates']]
-        df.columns = ['Bike station', 'Coordinates']
+        df = df[['Station no', 'Nazwa stacji', 'Coordinates']]
+        df.columns = ['Station no', 'Bike station', 'Coordinates']
 
         # Make separate columns for latitude and longitude.
         gps_coordinates = df['Coordinates'].str.split(', ', n = 1, expand = True)
