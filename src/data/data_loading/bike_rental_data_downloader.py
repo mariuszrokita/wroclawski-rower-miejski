@@ -2,7 +2,7 @@ import os
 
 from azure.storage.blob import BlockBlobService
 
-class BlobDownloader:
+class BikeRentalDataDownloader:
     def __init__(self, account_name, account_key, container_name):
         self.block_blob_service = BlockBlobService(account_name, account_key)
         self.container_name = container_name
@@ -18,6 +18,3 @@ class BlobDownloader:
             file_path = os.path.join(target_folder, name)
             if not os.path.exists(file_path):
                 self.block_blob_service.get_blob_to_path(self.container_name, name, file_path)
-                print(f"Downloaded file: {name}")
-            else:
-                print(f"File already downloaded: {name}")

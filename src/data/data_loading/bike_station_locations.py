@@ -56,7 +56,7 @@ class BikeStationsLocations:
         gps_coordinates = df['Coordinates'].str.split(', ', n = 1, expand = True)
         df.loc[:, 'Latitude'] = gps_coordinates[0]
         df.loc[:, 'Longitude'] = gps_coordinates[1]
-        df.drop("Coordinates", axis=1, inplace=True)
+        df = df.drop("Coordinates", axis=1)
 
         return df
 
