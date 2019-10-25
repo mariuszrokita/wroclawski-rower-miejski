@@ -3,6 +3,7 @@ This module contains functions to import bike availability data
 and to persist them in Azure Blob Storage.
 """
 
+import json
 import logging
 import requests
 
@@ -20,9 +21,16 @@ def get_bike_availability_data(url):
 
 def import_bike_availability_data(url, account_name, account_key, container_name):
     block_blob_service = BlockBlobService(account_name, account_key)
-    data = get_bike_availability_data(url)
 
     now = datetime.now()
-    filename = f'{now.strftime("%Y_%m_%d_%H_%M_%S")}.json'
-    block_blob_service.create_blob_from_text(container_name, filename, data)
-    logging.info(f"Created blob file '{filename}' in the container '{container_name}'")
+
+    # HACK: compare 'offset' and 'total' values returned from API to determine 
+    for offset in [0, 100, 200]:
+        url_with_offset = f'{url}&offset={offset}'
+        data = get_bike_availability_data(url_with_offset)
+        json_data = json.loads(data)
+        json_data['datetime'] = now.isoformat()
+
+        filename = f'{now.strftime("%Y_%m_%d_%H_%M_%S")}_{offset}.json'
+        block_blob_service.create_blob_from_text(container_name, filename, json.dumps(json_data))
+        logging.info(f"Created blob file '{filename}' in the container '{container_name}'")
