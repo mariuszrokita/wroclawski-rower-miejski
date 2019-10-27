@@ -3,6 +3,6 @@
 .ipynb_checkpoints
 __pycache__
 
-data/raw/*.csv
-data/interim/*.csv
-data/processed/*.csv
+*/data/raw/*.csv
+*/data/interim/*.csv
+*/data/processed/*.csv

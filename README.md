@@ -33,15 +33,21 @@ It is also worth installing the Jupyter Notebook Extensions:
 pip3 install jupyter_contrib_nbextensions && jupyter contrib nbextension install
 ```
 
-## Deployment
+## Project Structure
 
-The project consists of multiple components with different deployment steps.
+The project consists of 3 components:
 
-### Data Importer component
+* Data importing
+* Bike rentals
+* Bike availability
 
-The Data Importer compontent has been implemented as an Azure Function. It is part of the Function App.
+### Data Importing
 
-#### Local environment
+The main purpose of this component is to periodically import data (bike rentals, bike availability) and to persists those data in a separate storage.
+
+The Data Importer compontent has been implemented as two time-triggered Azure Functions.
+
+#### Deployment - Local environment
 
 In order to deploy function app locally run the following commands:
 
@@ -52,7 +58,7 @@ func host start
 
 #### Deployment to Azure Cloud
 
-Do following:
+Do the following:
 
 1. Install [jq](https://stedolan.github.io/jq/) library.
 
@@ -61,7 +67,7 @@ Do following:
 1. Run the following commands:
 
 ```bash
-cd deployment
+cd data-importing/deployment
 sh 01-provision-azure-resources.sh
 sh 02-deploy-azure-functions.sh
 ```
