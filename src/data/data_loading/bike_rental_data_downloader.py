@@ -3,6 +3,7 @@ import os
 from azure.storage.blob import BlockBlobService
 
 class BikeRentalDataDownloader:
+    
     def __init__(self, account_name, account_key, container_name):
         self.block_blob_service = BlockBlobService(account_name, account_key)
         self.container_name = container_name

@@ -12,8 +12,9 @@ class BikeStationsLocations:
         """Downloads and returns bike stations details: street name , gps coordinates.
         
         Returns:
-        * pandas.DataFrame - returning value
+        * pandas.DataFrame - returning value        
         """
+        
         raw_data_df = self.__download_bike_stations_data()
         clean_data_df = self.__clean(raw_data_df)
         return clean_data_df
