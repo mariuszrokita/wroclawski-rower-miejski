@@ -4,12 +4,12 @@ import pytest
 
 from pandas.util.testing import assert_frame_equal
 
-from src.features.season import SeasonExtractor
+from src.features.season import SeasonFeature
 
 
 class TestSeason:
 
-    def test_should_extract_season(self):
+    def test_should_determine_season_based_on_rental_datetime(self):
         # arrange
         data = {
             'Rental datetime': ['2019-05-01', '2019-02-01', '2019-11-01', '2019-08-01']
@@ -27,8 +27,8 @@ class TestSeason:
         expected_df['Rental datetime'] = pd.to_datetime(expected_df['Rental datetime'])
 
         # act
-        feature_extractor = SeasonExtractor('Rental datetime', 'Rental season')
-        actual_df = feature_extractor.transform(df)
+        feature = SeasonFeature('Rental datetime', 'Rental season')
+        actual_df = feature.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
@@ -44,7 +44,7 @@ class TestSeason:
         df['col_name'] = pd.to_datetime(df['col_name'])
 
         # act
-        feature_extractor = SeasonExtractor('Rental datetime', 'output col name')
+        feature_extractor = SeasonFeature('Rental datetime', 'output col name')
         
         with pytest.raises(KeyError, match='Rental datetime'):
-            actual_df = feature_extractor.transform(df)
+            feature_extractor.transform(df)
