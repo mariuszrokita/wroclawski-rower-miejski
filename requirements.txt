@@ -4,3 +4,4 @@ beautifulsoup4
 azure-storage
 scikit-learn
 pytest
+pandas

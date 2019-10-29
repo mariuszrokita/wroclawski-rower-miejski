@@ -4,7 +4,8 @@ import pytest
 
 from pandas.util.testing import assert_frame_equal
 
-from features.season import SeasonExtractor
+from src.features.season import SeasonExtractor
+
 
 class TestSeason:
 
