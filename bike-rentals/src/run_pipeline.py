@@ -1,8 +1,8 @@
 import json
 import os
 
-import data_loading.pipeline as data_loading_pipeline 
-import data_processing.pipeline as data_processing_pipeline
+import data.pipeline as data_loading_pipeline 
+import features.pipeline as data_processing_pipeline
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name, 
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     print("Pipeline execution started")
 
     # Set project root folder
-    mini_project_root_folder = os.path.abspath(os.path.join(os.getcwd(), '..', '..'))
+    mini_project_root_folder = os.path.abspath(os.path.join(os.getcwd(), '..'))
     print(f'Root folder set to: {mini_project_root_folder}')
 
     # Set up paths to data folders

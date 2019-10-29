@@ -1,6 +1,6 @@
 from sklearn.pipeline import make_pipeline
 
-from data_processing.feature_extraction.season import SeasonExtractor
+from features.season import SeasonExtractor
 
 
 def execute(df):
