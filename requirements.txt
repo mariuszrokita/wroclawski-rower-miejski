@@ -5,3 +5,4 @@ azure-storage
 scikit-learn
 pytest
 pandas
+matplotlib

@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import sys
@@ -31,7 +32,22 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
     print(f"Data saved to: {bike_rentals_filepath}")
 
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Execute pipelines for bike rentals data.')
+    parser.add_argument('--remove', type=str2bool, default=True, help='Remove some data as part of data cleaning')
+    args = parser.parse_args()
+
     print("Pipeline execution started")
 
     # Set project root folder
