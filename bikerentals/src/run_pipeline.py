@@ -1,19 +1,26 @@
 import json
 import os
-
 import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '..', '..')))
 
-
-import src.data.pipeline as data_loading_pipeline 
-import src.features.pipeline as data_processing_pipeline
+import bikerentals.src.data.pipeline as data_loading_pipeline
+import bikerentals.src.cleaning.pipeline as data_cleaning_pipeline
+import bikerentals.src.features.pipeline as data_processing_pipeline
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name, 
-                     raw_data_folder_path, processed_data_folder_path):
+        raw_data_folder_path, processed_data_folder_path):
+
+    """
+    Scaffold end execute entire pipeline: data loading, cleaning and feature engineering.
+    """
     
     # data loading
-    df = data_loading_pipeline.execute(account_name, account_key, bike_rental_data_container_name, raw_data_folder_path)
+    df = data_loading_pipeline.execute(account_name, account_key, 
+                                       bike_rental_data_container_name, raw_data_folder_path)
+
+    # data cleaning
+    df = data_cleaning_pipeline.execute(df)
 
     # data processing
     df = data_processing_pipeline.execute(df)
@@ -47,6 +54,6 @@ if __name__ == "__main__":
 
     # execute pipeline
     execute_pipeline(account_name, account_key, container_name, 
-                     raw_data_folder_path, processed_data_folder_path)
+        raw_data_folder_path, processed_data_folder_path)
 
     print("Pipeline execution completed")

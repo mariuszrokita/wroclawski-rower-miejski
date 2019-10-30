@@ -1,7 +1,7 @@
 from sklearn.pipeline import make_pipeline
 
-from src.features.holidays import HolidaysFeature
-from src.features.season import SeasonFeature
+from bikerentals.src.features.holidays import HolidaysFeature
+from bikerentals.src.features.season import SeasonFeature
 
 holiday_dates = [
     '2019-01-01', '2019-01-06', '2019-04-21', '2019-04-22', '2019-05-01', 

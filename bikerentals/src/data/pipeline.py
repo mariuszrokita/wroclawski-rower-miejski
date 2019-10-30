@@ -1,7 +1,7 @@
-from src.data.bike_rental_data_downloader import BikeRentalDataDownloader
-from src.data.bike_rental_records import BikeRentalRecords
-from src.data.bike_station_locations import BikeStationsLocations
-from src.data.data_concatenation import combine_datasets
+from bikerentals.src.data.bike_rental_data_downloader import BikeRentalDataDownloader
+from bikerentals.src.data.bike_rental_records import BikeRentalRecords
+from bikerentals.src.data.bike_station_locations import BikeStationsLocations
+from bikerentals.src.data.data_concatenation import combine_datasets
 
 def execute(account_name, account_key, bike_rental_data_container_name, raw_data_folderpath):
     """
