@@ -20,13 +20,14 @@ conda activate nextbike
 ### Install dependencies
 
 ```bash
-pip3 install -r requirements.txt
+pip install --upgrade pip
+pip install -U -r requirements.txt
 ```
 
 It is also worth installing the Jupyter Notebook Extensions:
 
 ```bash
-pip3 install jupyter_contrib_nbextensions && jupyter contrib nbextension install
+pip install jupyter_contrib_nbextensions && jupyter contrib nbextension install
 ```
 
 ### Prerequisites

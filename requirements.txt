@@ -6,3 +6,4 @@ scikit-learn
 pytest
 pandas
 matplotlib
+flake8
