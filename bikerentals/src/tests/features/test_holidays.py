@@ -1,7 +1,5 @@
-import numpy as np
 import pandas as pd
 import pytest
-
 from pandas.util.testing import assert_frame_equal
 
 from bikerentals.src.features.holidays import HolidaysFeature
@@ -29,8 +27,8 @@ class TestHolidays:
         holidays_dates = ['2019-05-01']
 
         # act
-        feature = HolidaysFeature('Rental datetime', 'Holidays', holidays_dates, False)
-        actual_df = feature.transform(df)
+        sut = HolidaysFeature('Rental datetime', 'Holidays', holidays_dates, False)
+        actual_df = sut.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
@@ -54,9 +52,10 @@ class TestHolidays:
 
         holidays_dates = ['2019-05-01']
 
+        sut = HolidaysFeature('Rental datetime', 'Holidays', holidays_dates, True)
+
         # act
-        feature = HolidaysFeature('Rental datetime', 'Holidays', holidays_dates, True)
-        actual_df = feature.transform(df)
+        actual_df = sut.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
@@ -73,7 +72,7 @@ class TestHolidays:
         holidays_dates = []
 
         # act
-        feature = HolidaysFeature('Rental datetime', 'output col name', holidays_dates)
-        
+        sut = HolidaysFeature('Rental datetime', 'output col name', holidays_dates)
+
         with pytest.raises(KeyError, match='Rental datetime'):
-            feature.transform(df)
+            sut.transform(df)

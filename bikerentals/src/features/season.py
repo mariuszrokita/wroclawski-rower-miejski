@@ -24,12 +24,11 @@ class SeasonFeature(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         assert isinstance(X, pd.DataFrame)
-        
+
         print("* SeasonFeature *")
         print("--> input data shape: ", X.shape)
 
-        X[self.output_col] = (X[self.input_col].dt.month%12 + 3)//3
+        X[self.output_col] = (X[self.input_col].dt.month % 12 + 3)//3
 
         print("--> output data shape: ", X.shape)
         return X
-  

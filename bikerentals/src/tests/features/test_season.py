@@ -1,7 +1,5 @@
-import numpy as np
 import pandas as pd
 import pytest
-
 from pandas.util.testing import assert_frame_equal
 
 from bikerentals.src.features.season import SeasonFeature
@@ -26,14 +24,14 @@ class TestSeason:
         expected_df = pd.DataFrame(expected)
         expected_df['Rental datetime'] = pd.to_datetime(expected_df['Rental datetime'])
 
+        sut = SeasonFeature('Rental datetime', 'Rental season')
+
         # act
-        feature = SeasonFeature('Rental datetime', 'Rental season')
-        actual_df = feature.transform(df)
+        actual_df = sut.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
 
-    
     def test_should_throw_when_missing_input_column(self):
         # arrange
         data = {
@@ -44,7 +42,7 @@ class TestSeason:
         df['col_name'] = pd.to_datetime(df['col_name'])
 
         # act
-        feature_extractor = SeasonFeature('Rental datetime', 'output col name')
-        
+        sut = SeasonFeature('Rental datetime', 'output col name')
+
         with pytest.raises(KeyError, match='Rental datetime'):
-            feature_extractor.transform(df)
+            sut.transform(df)
