@@ -8,13 +8,13 @@ class BikeStationsLocations:
 
     URL = 'https://wroclawskirower.pl/en/stations-map/'
 
-    def load_data(self):
+    def load_data(self) -> pd.DataFrame:
         """Downloads and returns bike stations details: street name , gps coordinates.
-        
+
         Returns:
-        * pandas.DataFrame - returning value        
+        * dataframe
         """
-        
+
         raw_data_df = self.__download_bike_stations_data()
         clean_data_df = self.__clean(raw_data_df)
         return clean_data_df
@@ -33,7 +33,7 @@ class BikeStationsLocations:
         header_cols = [ele.text.strip() for ele in header_row.find_all('th')]
 
         # data rows
-        for row in rows[1:]:  
+        for row in rows[1:]:
             cols = row.find_all('td')
             cols = [ele.text.strip() for ele in cols]
             data.append(cols)
@@ -44,7 +44,7 @@ class BikeStationsLocations:
         # Make sure input(raw) data has known structure
         self.__assert_input_data_structure(df)
 
-        # Remove records that have no station number - records related to bikes 
+        # Remove records that have no station number - records related to bikes
         # that were returned to some places outside official bike stations.
         df = df.dropna(subset=['Station no'])
 
@@ -54,7 +54,7 @@ class BikeStationsLocations:
         df.columns = ['Station no', 'Bike station', 'Coordinates']
 
         # Make separate columns for latitude and longitude.
-        gps_coordinates = df['Coordinates'].str.split(', ', n = 1, expand = True)
+        gps_coordinates = df['Coordinates'].str.split(', ', n=1, expand=True)
         df.loc[:, 'Latitude'] = gps_coordinates[0]
         df.loc[:, 'Longitude'] = gps_coordinates[1]
         df = df.drop("Coordinates", axis=1)

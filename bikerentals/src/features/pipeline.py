@@ -12,6 +12,11 @@ holiday_dates = [
 
 def execute(df):
 
+    # TODO: Add new features
+    # - distance between rental and return bike stations (considered as a straight line between those points)
+    # - average speed
+    # - weather, forecasted weather
+    # - month, day, hour
     data_processing_pipeline = make_pipeline(
         SeasonFeature('Rental datetime', 'Season'),
         HolidaysFeature('Rental datetime', 'Holidays', holiday_dates)

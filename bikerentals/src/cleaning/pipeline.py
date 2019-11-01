@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.pipeline import make_pipeline
 
+from bikerentals.src.cleaning.extract_gps_from_station_name import GpsFromStationNameExtractor
+from bikerentals.src.cleaning.remove_missing_gps import MissingGpsLocationRemover
 from bikerentals.src.cleaning.remove_same_location import SameLocationRemover
 
 
@@ -13,10 +15,15 @@ def execute(df: pd.DataFrame, hard_delete: bool) -> pd.DataFrame:
     * hard_delete - delete permanently records, otherwise soft delete will be applied
     """
 
+    gps_location_cols = ['Rental station latitude', 'Rental station longitude',
+                         'Return station latitude', 'Return station longitude']
     flag_col = 'IsDeleted'
 
     data_cleaning_pipeline = make_pipeline(
-        SameLocationRemover('Rental station', 'Return station', flag_col)
+        GpsFromStationNameExtractor('Rental station', 'Rental station latitude', 'Rental station longitude'),
+        GpsFromStationNameExtractor('Return station', 'Return station latitude', 'Return station longitude'),
+        SameLocationRemover('Rental station', 'Return station', flag_col),
+        MissingGpsLocationRemover(gps_location_cols, flag_col)
     )
 
     # execute pipeline
