@@ -28,7 +28,7 @@ class HolidaysFeature(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         assert isinstance(X, pd.DataFrame)
-        
+
         print("* HolidaysFeature *")
         print("--> input data shape: ", X.shape)
 
@@ -36,7 +36,7 @@ class HolidaysFeature(BaseEstimator, TransformerMixin):
         dates = [parse(date) for date in self.holidays_dates]
         X[self.output_col] = X[self.input_col].isin(dates)
 
-        if self.mark_sundays_as_holidays == True:
+        if self.mark_sundays_as_holidays:
             # The day numbers: Monday=0, Sunday=6
             X[self.output_col] = (X[self.output_col] | (X[self.input_col].dt.dayofweek == 6))
 

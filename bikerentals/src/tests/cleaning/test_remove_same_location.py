@@ -7,7 +7,7 @@ from bikerentals.src.cleaning.remove_same_location import SameLocationRemover
 
 class TestSameLocationRemover:
 
-    def test_should_remove_records_when_rental_station_and_return_station_is_same(self):
+    def test_should_mark_records_for_deletion_when_rental_station_and_return_station_is_same(self):
         # arrange
         data = {
             'UID': [1, 2, 3, 4, 5],
@@ -17,17 +17,18 @@ class TestSameLocationRemover:
         }
 
         expected = {
-            'UID': [1, 3, 5],
-            'Rental station': ['Station A', 'Station C', 'Station E'],
-            'Return station': ['Station Z', 'Station D', 'Station B'],
-            'Duration': [2, 1, 5]
+            'UID': [1, 2, 3, 4, 5],
+            'Rental station': ['Station A', 'Station B', 'Station C', 'Station D', 'Station E'],
+            'Return station': ['Station Z', 'Station B', 'Station D', 'Station D', 'Station B'],
+            'Duration': [2, 2, 1, 4, 5],
+            'IsDeleted': [False, True, False, True, False]
         }
 
         df = pd.DataFrame(data).set_index('UID')
         expected_df = pd.DataFrame(expected).set_index('UID')
 
         # act
-        sut = SameLocationRemover('Rental station', 'Return station')
+        sut = SameLocationRemover('Rental station', 'Return station', flag_col='IsDeleted')
         actual_df = sut.transform(df)
 
         # assert
@@ -43,7 +44,7 @@ class TestSameLocationRemover:
         df = pd.DataFrame(data)
 
         # act
-        sut = SameLocationRemover('some col name', 'Return station')
+        sut = SameLocationRemover('some col name', 'Return station', flag_col='IsDeleted')
 
         with pytest.raises(KeyError, match='some col name'):
             sut.transform(df)
@@ -58,7 +59,7 @@ class TestSameLocationRemover:
         df = pd.DataFrame(data)
 
         # act
-        sut = SameLocationRemover('Rental station', 'some col name')
+        sut = SameLocationRemover('Rental station', 'some col name', flag_col='IsDeleted')
 
         with pytest.raises(KeyError, match='some col name'):
             sut.transform(df)

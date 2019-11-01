@@ -10,7 +10,7 @@ import bikerentals.src.features.pipeline as data_processing_pipeline
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
-                     raw_data_folder_path, processed_data_folder_path, remove_records):
+                     raw_data_folder_path, processed_data_folder_path, hard_delete):
     """
     Scaffold end execute entire pipeline: data loading, cleaning and feature engineering.
 
@@ -20,7 +20,7 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
     * bike_rental_data_container_name - the name of storage container containing bike rental data
     * raw_data_folder_path - the path to a folder with raw data to be processed
     * processed_data_folder_path - the path to a folder where output file should be saved to
-    * remove_records - indicate whether to remove some records while cleaning data
+    * hard_delete - delete records marked for deletion
     """
 
     # data loading
@@ -29,7 +29,7 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
                                        raw_data_folder_path)
 
     # data cleaning
-    df = data_cleaning_pipeline.execute(df, remove_records)
+    df = data_cleaning_pipeline.execute(df, hard_delete)
 
     # data processing
     df = data_processing_pipeline.execute(df)
