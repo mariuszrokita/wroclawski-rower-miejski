@@ -8,10 +8,6 @@ The aim of this project is to analyze bike sharing data and draw insights that c
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
-
-You need to have an active Azure subscription. If you don't have it, create a [free account](https://azure.microsoft.com/en-us/free/) before you begin.
-
 ### Virtual environment
 
 First of all, create a brand new virtual environment to have an isolated workspace with specific package installs. It is extremely useful when developing multiple projects that require different dependencies.
@@ -24,14 +20,21 @@ conda activate nextbike
 ### Install dependencies
 
 ```bash
-pip3 install -r requirements.txt
+pip install --upgrade pip
+pip install -U -r requirements.txt
 ```
 
 It is also worth installing the Jupyter Notebook Extensions:
 
 ```bash
-pip3 install jupyter_contrib_nbextensions && jupyter contrib nbextension install
+pip install jupyter_contrib_nbextensions && jupyter contrib nbextension install
 ```
+
+### Prerequisites
+
+* An active Azure subscription. If you don't have it, create a [free account](https://azure.microsoft.com/en-us/free/) before you begin.
+* The [Azure Functions Core Tools](https://docs.microsoft.com/en-us/azure/azure-functions/functions-run-local#v2).
+* [Visual Studio Code with the Azure Functions extension](https://docs.microsoft.com/en-us/azure/python/tutorial-vs-code-serverless-python-01#visual-studio-code-python-and-the-azure-functions-extension.)
 
 ## Project Structure
 

@@ -3,3 +3,7 @@ requests
 beautifulsoup4
 azure-storage
 scikit-learn
+pytest
+pandas
+matplotlib
+flake8
