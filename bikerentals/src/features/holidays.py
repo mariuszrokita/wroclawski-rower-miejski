@@ -7,17 +7,16 @@ from sklearn.base import BaseEstimator, TransformerMixin
 class HolidaysFeature(BaseEstimator, TransformerMixin):
     """
     Extracts information about holidays and append it to the input dataframe.
+    The new column contains boolean values.
 
-    Input:
-    * input_col - the name of the pandas.DataFrame column with values to analyze.
-    * output_col - the name of a new column that should be appended to pandas.DataFrame
-    * holidays_dates - list of holidays
-    * mark_sundays_as_holidays - flag to treat Sundays as holidays or not
-
-    Returns:
-    * a dataframe with a new column containing boolean values.
+    Args:
+        input_col - the name of the pandas.DataFrame column with values to analyze.
+        output_col - the name of a new column that should be appended to pandas.DataFrame
+        holidays_dates - list of holidays
+        mark_sundays_as_holidays - flag to treat Sundays as holidays or not
     """
-    def __init__(self, input_col, output_col, holidays_dates, mark_sundays_as_holidays=True):
+    def __init__(self, input_col: str, output_col: str,
+                 holidays_dates: [str], mark_sundays_as_holidays: bool = True):
         self.input_col = input_col
         self.output_col = output_col
         self.holidays_dates = holidays_dates
@@ -26,7 +25,7 @@ class HolidaysFeature(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X):
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
         print("* HolidaysFeature *")

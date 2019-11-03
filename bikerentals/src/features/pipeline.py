@@ -1,6 +1,9 @@
 from sklearn.pipeline import make_pipeline
 
+from bikerentals.src.features.day_of_week import DayOfWeekFeature
 from bikerentals.src.features.holidays import HolidaysFeature
+from bikerentals.src.features.hour import HourFeature
+from bikerentals.src.features.month import MonthFeature
 from bikerentals.src.features.season import SeasonFeature
 
 holiday_dates = [
@@ -12,14 +15,16 @@ holiday_dates = [
 
 def execute(df):
 
-    # TODO: Add new features
+    # TODO: Add new features:
     # - distance between rental and return bike stations (considered as a straight line between those points)
     # - average speed
     # - weather, forecasted weather
-    # - month, day, hour
     data_processing_pipeline = make_pipeline(
         SeasonFeature('Rental datetime', 'Season'),
-        HolidaysFeature('Rental datetime', 'Holidays', holiday_dates)
+        HolidaysFeature('Rental datetime', 'Holidays', holiday_dates),
+        DayOfWeekFeature('Rental datetime', 'Rental day of week'),
+        HourFeature('Rental datetime', 'Rental hour'),
+        MonthFeature('Rental datetime', 'Rental month')
     )
 
     # execute pipeline and return result
