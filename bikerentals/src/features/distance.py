@@ -31,10 +31,30 @@ class DistanceFeature(BaseEstimator, TransformerMixin):
         print("* DistanceFeature *")
         print("--> input data shape: ", X.shape)
 
+        cache = {}
+
         def calculate_distance(row):
+            """
+            Calculate shortest distance between two points (streight line).
+            Calculated distances are cached so there's no need to recalculate 
+            distance between same points.
+            """
             rental_station_gps = (row[self.rental_station_lat_col], row[self.rental_station_long_col])
             return_station_gps = (row[self.return_station_lat_col], row[self.return_station_long_col])
-            return round(geodesic(rental_station_gps, return_station_gps).km, 1)
+
+            key1 = str(rental_station_gps + return_station_gps)
+            if key1 in cache.keys():
+                return cache[key1]
+
+            key2 = str(return_station_gps + rental_station_gps)
+            if key2 in cache.keys():
+                return cache[key2]
+
+            # calculate distance and cache
+            distance = round(geodesic(rental_station_gps, return_station_gps).km, 1)
+            cache[key1] = distance
+            cache[key2] = distance
+            return cache[key1]
 
         # determine what rows contain any NaN value in columns used for calculations
         nans = X[[self.rental_station_lat_col, self.rental_station_long_col,
