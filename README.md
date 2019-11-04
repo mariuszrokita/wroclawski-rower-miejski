@@ -21,7 +21,7 @@ conda activate nextbike
 
 ```bash
 pip install --upgrade pip
-pip install -U -r requirements.txt
+pip install -r requirements.txt
 ```
 
 It is also worth installing the Jupyter Notebook Extensions:

@@ -36,7 +36,7 @@ class DistanceFeature(BaseEstimator, TransformerMixin):
         def calculate_distance(row):
             """
             Calculate shortest distance between two points (streight line).
-            Calculated distances are cached so there's no need to recalculate 
+            Calculated distances are cached so there's no need to recalculate
             distance between same points.
             """
             rental_station_gps = (row[self.rental_station_lat_col], row[self.rental_station_long_col])
