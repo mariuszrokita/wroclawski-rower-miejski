@@ -1,0 +1,20 @@
+name: nextbike
+channels:
+  - conda-forge
+dependencies:
+  - python=3.6.8
+  - requests
+  - beautifulsoup4
+  - scikit-learn
+  - pytest
+  - pandas
+  - matplotlib
+  - flake8
+  - rope # refactoring
+  - geopy
+  - azure-storage
+  - jupyter_contrib_nbextensions
+  - pip
+  - pip:
+    - azure-cli
+    - streamlit
