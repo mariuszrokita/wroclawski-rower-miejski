@@ -10,7 +10,7 @@ data_filepath = os.path.join(os.getcwd(), '..', 'data', 'processed', 'bike_renta
 @st.cache
 def fetch_and_clean_data():
     data = pd.read_csv(data_filepath)
-    idx = data[data['IsDeleted'] == False].index
+    idx = data[data['IsDeleted'] == False].index  # noqa E712
     data_subset = data.loc[idx, ['Rental station latitude', 'Rental station longitude', 'Rental hour']]
     data_subset.columns = ['latitude', 'longitude', 'hour']
     return data_subset
