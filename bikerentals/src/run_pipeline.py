@@ -53,8 +53,8 @@ def str2bool(v):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Execute pipelines for bike rentals data.')
-    parser.add_argument('--remove', help='Remove some data as part of data cleaning',
-                        type=str2bool, default=True)
+    parser.add_argument('--hard-delete', help='Remove data while cleaning, otherwise mark records for removal',
+                        type=str2bool, default=True, dest='hard_delete')
     args = parser.parse_args()
 
     print("Pipeline execution started")
@@ -80,9 +80,8 @@ if __name__ == "__main__":
         container_name = local_settings['Values']['storage_container_name']
 
     # execute pipeline
-    remove_records = args.remove
     execute_pipeline(account_name, account_key, container_name,
                      raw_data_folder_path, processed_data_folder_path,
-                     remove_records)
+                     args.hard_delete)
 
     print("Pipeline execution completed")
