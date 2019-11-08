@@ -10,7 +10,8 @@ import bikerentals.src.features.pipeline as data_processing_pipeline
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
-                     raw_data_folder_path, processed_data_folder_path, hard_delete):
+                     raw_data_folder_path, processed_data_folder_path, hard_delete,
+                     save_base_name):
     """
     Scaffold end execute entire pipeline: data loading, cleaning and feature engineering.
 
@@ -21,6 +22,7 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
     * raw_data_folder_path - the path to a folder with raw data to be processed
     * processed_data_folder_path - the path to a folder where output file should be saved to
     * hard_delete - delete records marked for deletion
+    * save_base_name - The output dataset file base name
     """
 
     # data loading
@@ -35,7 +37,7 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
     df = data_processing_pipeline.execute(df)
 
     # save as csv
-    save_dirname = os.path.join(processed_data_folder_path, 'bike_rentals.csv')
+    save_dirname = os.path.join(processed_data_folder_path, '{}.csv'.format(save_base_name))
     df.to_csv(save_dirname, index=False)
     print(f"Data saved to: {save_dirname}")
 
@@ -52,9 +54,12 @@ def str2bool(v):
 
 
 if __name__ == "__main__":
+    # Construct documentation for the script parameters
     parser = argparse.ArgumentParser(description='Execute pipelines for bike rentals data.')
     parser.add_argument('--hard-delete', help='Remove data while cleaning, otherwise mark records for removal',
                         type=str2bool, default=True, dest='hard_delete')
+    parser.add_argument('--save-base-name', help='The output dataset file base name',
+                        type=str, default='bike_rentals', dest='save_base_name')
     args = parser.parse_args()
 
     print("Pipeline execution started")
@@ -82,6 +87,5 @@ if __name__ == "__main__":
     # execute pipeline
     execute_pipeline(account_name, account_key, container_name,
                      raw_data_folder_path, processed_data_folder_path,
-                     args.hard_delete)
-
+                     args.hard_delete, args.save_base_name)
     print("Pipeline execution completed")
