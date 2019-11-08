@@ -2,11 +2,14 @@ import argparse
 import json
 import os
 import sys
+from sklearn.pipeline import make_pipeline
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '..', '..')))
 
-import bikerentals.src.data.pipeline as data_loading_pipeline
-import bikerentals.src.cleaning.pipeline as data_cleaning_pipeline
-import bikerentals.src.features.pipeline as data_processing_pipeline
+from bikerentals.src.data.pipeline import DataIngestion
+from bikerentals.src.cleaning.pipeline import DataCleaning
+from bikerentals.src.features.pipeline import DataFeaturization
+from bikerentals.src.utils.argparse import str2bool
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
@@ -25,32 +28,23 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
     * save_base_name - The output dataset file base name
     """
 
-    # data loading
-    df = data_loading_pipeline.execute(account_name, account_key,
-                                       bike_rental_data_container_name,
-                                       raw_data_folder_path)
+    data_prep_pipeline = make_pipeline(
+        # data loading
+        DataIngestion(account_name, account_key, bike_rental_data_container_name, raw_data_folder_path),
+        # data cleaning
+        DataCleaning(hard_delete),
+        # data processing
+        DataFeaturization()
+    )
 
-    # data cleaning
-    df = data_cleaning_pipeline.execute(df, hard_delete)
-
-    # data processing
-    df = data_processing_pipeline.execute(df)
+    # we're starting off our pipeline with no initiall data to process - we basically
+    # need to ingest it first, and then process it.
+    df = data_prep_pipeline.transform(None)
 
     # save as csv
     save_dirname = os.path.join(processed_data_folder_path, '{}.csv'.format(save_base_name))
     df.to_csv(save_dirname, index=False)
     print(f"Data saved to: {save_dirname}")
-
-
-def str2bool(v):
-    if isinstance(v, bool):
-        return v
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
-        return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
-        return False
-    else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 
 if __name__ == "__main__":
@@ -62,7 +56,7 @@ if __name__ == "__main__":
                         type=str, default='bike_rentals', dest='save_base_name')
     args = parser.parse_args()
 
-    print("Pipeline execution started")
+    print("Script execution started")
 
     # Set project root folder
     mini_project_root_folder = os.path.abspath(os.path.join(os.getcwd(), '..'))
@@ -85,6 +79,7 @@ if __name__ == "__main__":
         container_name = local_settings['Values']['storage_container_name']
 
     # execute pipeline
+    print("Pipeline execution about to start")
     execute_pipeline(account_name, account_key, container_name,
                      raw_data_folder_path, processed_data_folder_path,
                      args.hard_delete, args.save_base_name)

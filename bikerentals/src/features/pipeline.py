@@ -1,3 +1,5 @@
+import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import make_pipeline
 
 from bikerentals.src.features.day_of_week import DayOfWeekFeature
@@ -14,22 +16,30 @@ holiday_dates = [
 ]
 
 
-def execute(df):
+class DataFeaturization(BaseEstimator, TransformerMixin):
 
-    # TODO: Add new features:
-    # - average speed
-    # - weather, forecasted weather
-    # - distance to nearest university, cinema etc.
-    data_processing_pipeline = make_pipeline(
-        SeasonFeature('Rental datetime', 'Season'),
-        HolidaysFeature('Rental datetime', 'Holidays', holiday_dates),
-        DayOfWeekFeature('Rental datetime', 'Rental day of week'),
-        HourFeature('Rental datetime', 'Rental hour'),
-        MonthFeature('Rental datetime', 'Rental month'),
-        DistanceFeature('Rental station latitude', 'Rental station longitude',
-                        'Return station latitude', 'Return station longitude', 'Distance')
-    )
+    def __init__(self):
+        pass
 
-    # execute pipeline and return result
-    processed_df = data_processing_pipeline.transform(df)
-    return processed_df
+    def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+
+        # TODO: Add new features:
+        # - average speed
+        # - weather, forecasted weather
+        # - distance to nearest university, cinema etc.
+        data_processing_pipeline = make_pipeline(
+            SeasonFeature('Rental datetime', 'Season'),
+            HolidaysFeature('Rental datetime', 'Holidays', holiday_dates),
+            DayOfWeekFeature('Rental datetime', 'Rental day of week'),
+            HourFeature('Rental datetime', 'Rental hour'),
+            MonthFeature('Rental datetime', 'Rental month'),
+            DistanceFeature('Rental station latitude', 'Rental station longitude',
+                            'Return station latitude', 'Return station longitude', 'Distance')
+        )
+
+        # execute pipeline and return result
+        processed_df = data_processing_pipeline.transform(X)
+        return processed_df

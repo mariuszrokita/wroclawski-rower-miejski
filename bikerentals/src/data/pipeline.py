@@ -1,4 +1,5 @@
 import pandas as pd
+from sklearn.base import BaseEstimator, TransformerMixin
 
 from bikerentals.src.data.data_concatenation import combine_datasets
 from bikerentals.src.data.bike_rental_data_downloader import BikeRentalDataDownloader
@@ -6,26 +7,38 @@ from bikerentals.src.data.bike_rental_records import BikeRentalRecords
 from bikerentals.src.data.bike_station_locations import BikeStationsLocations
 
 
-def execute(account_name: str, account_key: str, bike_rental_data_container_name: str,
-            raw_data_folderpath: str) -> pd.DataFrame:
-    """
-    Execute data loading pipeline.
+class DataIngestion(BaseEstimator, TransformerMixin):
 
-    Parameters:
-    * account_name - Azure Storage account name
-    * account_key - Azure Storage account key
-    * bike_rental_data_container_name - the name of storage container containing bike rental data
-    * raw_data_folderpath - path to folder when raw data should be downloaded to
-    """
-    # Download all bike rental data from Azure Blob Storage and save it locally
-    blob_downloader = BikeRentalDataDownloader(account_name, account_key, bike_rental_data_container_name)
-    blob_downloader.download_blobs_and_save(raw_data_folderpath)
+    def __init__(self, account_name: str, account_key: str,
+                 bike_rental_data_container_name: str, raw_data_folderpath: str):
+        """
+        Execute data loading pipeline.
 
-    # Read all local csv files with bike rental data and combine it into one dataframe
-    bike_rentals_df = BikeRentalRecords(raw_data_folderpath).load_data()
+        Parameters:
+        * account_name - Azure Storage account name
+        * account_key - Azure Storage account key
+        * bike_rental_data_container_name - the name of storage container containing bike rental data
+        * raw_data_folderpath - path to folder when raw data should be downloaded to
+        """
+        self.account_name = account_name
+        self.account_key = account_key
+        self.bike_rental_data_container_name = bike_rental_data_container_name
+        self.raw_data_folderpath = raw_data_folderpath
 
-    # Load bike station information (number, street, gps coordinates)
-    bike_stations_df = BikeStationsLocations().load_data()
+    def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
+        return self
 
-    # Combine everything together and return one dataset
-    return combine_datasets(bike_rentals_df, bike_stations_df)
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        # Download all bike rental data from Azure Blob Storage and save it locally
+        blob_downloader = BikeRentalDataDownloader(self.account_name, self.account_key, 
+                                                   self.bike_rental_data_container_name)
+        blob_downloader.download_blobs_and_save(self.raw_data_folderpath)
+
+        # Read all local csv files with bike rental data and combine it into one dataframe
+        bike_rentals_df = BikeRentalRecords(self.raw_data_folderpath).load_data()
+
+        # Load bike station information (number, street, gps coordinates)
+        bike_stations_df = BikeStationsLocations().load_data()
+
+        # Combine everything together and return one dataset
+        return combine_datasets(bike_rentals_df, bike_stations_df)

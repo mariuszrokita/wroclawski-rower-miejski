@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
 
-from bikerentals.src.cleaning.pipeline import execute
+from bikerentals.src.cleaning.pipeline import DataCleaning
 
 
 class TestDataCleaningPipeline:
@@ -33,8 +33,10 @@ class TestDataCleaningPipeline:
         df = pd.DataFrame(data).set_index('UID')
         expected_df = pd.DataFrame(expected).set_index('UID')
 
+        pipeline = DataCleaning(hard_delete=False)  # soft delete
+
         # act
-        actual_df = execute(df, hard_delete=False)  # soft delete
+        actual_df = pipeline.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
@@ -64,8 +66,10 @@ class TestDataCleaningPipeline:
         df = pd.DataFrame(data).set_index('UID')
         expected_df = pd.DataFrame(expected).set_index('UID')
 
+        pipeline = DataCleaning(hard_delete=True)
+
         # act
-        actual_df = execute(df, hard_delete=True)
+        actual_df = pipeline.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
@@ -95,8 +99,10 @@ class TestDataCleaningPipeline:
         df = pd.DataFrame(data).set_index('UID')
         expected_df = pd.DataFrame(expected).set_index('UID')
 
+        pipeline = DataCleaning(hard_delete=True)
+
         # act
-        actual_df = execute(df, hard_delete=True)
+        actual_df = pipeline.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
@@ -126,8 +132,10 @@ class TestDataCleaningPipeline:
         df = pd.DataFrame(data).set_index('UID')
         expected_df = pd.DataFrame(expected).set_index('UID')
 
+        pipeline = DataCleaning(hard_delete=True)
+
         # act
-        actual_df = execute(df, hard_delete=True)
+        actual_df = pipeline.transform(df)
 
         # assert
         assert_frame_equal(actual_df, expected_df)
