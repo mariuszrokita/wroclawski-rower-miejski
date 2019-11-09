@@ -19,18 +19,11 @@ holiday_dates = [
 class DataFeaturization(BaseEstimator, TransformerMixin):
 
     def __init__(self):
-        pass
-
-    def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
-        return self
-
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-
         # TODO: Add new features:
         # - average speed
         # - weather, forecasted weather
         # - distance to nearest university, cinema etc.
-        data_processing_pipeline = make_pipeline(
+        self.data_processing_pipeline = make_pipeline(
             SeasonFeature('Rental datetime', 'Season'),
             HolidaysFeature('Rental datetime', 'Holidays', holiday_dates),
             DayOfWeekFeature('Rental datetime', 'Rental day of week'),
@@ -40,6 +33,17 @@ class DataFeaturization(BaseEstimator, TransformerMixin):
                             'Return station latitude', 'Return station longitude', 'Distance')
         )
 
-        # execute pipeline and return result
-        processed_df = data_processing_pipeline.transform(X)
-        return processed_df
+    def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        assert isinstance(X, pd.DataFrame)
+
+        print("****** DataFeaturization stage ******")
+        print("DataFeaturization - input data shape: ", X.shape)
+
+        # execute pipeline
+        X = self.data_processing_pipeline.transform(X)
+
+        print("DataFeaturization - output data shape: ", X.shape)
+        return X

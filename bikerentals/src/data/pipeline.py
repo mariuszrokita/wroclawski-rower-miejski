@@ -29,8 +29,10 @@ class DataIngestion(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        print("****** DataIngestion stage ******")
+
         # Download all bike rental data from Azure Blob Storage and save it locally
-        blob_downloader = BikeRentalDataDownloader(self.account_name, self.account_key, 
+        blob_downloader = BikeRentalDataDownloader(self.account_name, self.account_key,
                                                    self.bike_rental_data_container_name)
         blob_downloader.download_blobs_and_save(self.raw_data_folderpath)
 
@@ -41,4 +43,6 @@ class DataIngestion(BaseEstimator, TransformerMixin):
         bike_stations_df = BikeStationsLocations().load_data()
 
         # Combine everything together and return one dataset
-        return combine_datasets(bike_rentals_df, bike_stations_df)
+        df = combine_datasets(bike_rentals_df, bike_stations_df)
+        print("DataIngestion - output data shape: ", df.shape)
+        return df
