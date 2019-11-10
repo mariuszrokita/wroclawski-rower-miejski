@@ -6,6 +6,7 @@ from bikerentals.src.cleaning.extract_gps_from_station_name import GpsFromStatio
 from bikerentals.src.cleaning.records_remover import RecordsRemover
 from bikerentals.src.cleaning.remove_missing_gps import MissingGpsLocationRemover
 from bikerentals.src.cleaning.remove_same_location import SameLocationRemover
+from bikerentals.src.utils.logging import logger
 
 
 class DataCleaning(BaseEstimator, TransformerMixin):
@@ -37,11 +38,11 @@ class DataCleaning(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
-        print("****** DataCleaning stage ******")
-        print("DataCleaning - input data shape: ", X.shape)
+        logger.info("****** DataCleaning stage ******")
+        logger.info(f"DataCleaning - input data shape: {X.shape}")
 
         # execute pipeline
         X = self.data_cleaning_pipeline.transform(X)
 
-        print("DataCleaning - output data shape: ", X.shape)
+        logger.info(f"DataCleaning - output data shape: {X.shape}")
         return X

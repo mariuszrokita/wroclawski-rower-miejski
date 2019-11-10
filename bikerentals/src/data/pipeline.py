@@ -5,6 +5,7 @@ from bikerentals.src.data.data_concatenation import combine_datasets
 from bikerentals.src.data.bike_rental_data_downloader import BikeRentalDataDownloader
 from bikerentals.src.data.bike_rental_records import BikeRentalRecords
 from bikerentals.src.data.bike_station_locations import BikeStationsLocations
+from bikerentals.src.utils.logging import logger
 
 
 class DataIngestion(BaseEstimator, TransformerMixin):
@@ -29,7 +30,7 @@ class DataIngestion(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        print("****** DataIngestion stage ******")
+        logger.info("****** DataIngestion stage ******")
 
         # Download all bike rental data from Azure Blob Storage and save it locally
         blob_downloader = BikeRentalDataDownloader(self.account_name, self.account_key,
@@ -44,5 +45,5 @@ class DataIngestion(BaseEstimator, TransformerMixin):
 
         # Combine everything together and return one dataset
         df = combine_datasets(bike_rentals_df, bike_stations_df)
-        print("DataIngestion - output data shape: ", df.shape)
+        logger.info(f"DataIngestion - output data shape: {df.shape}")
         return df

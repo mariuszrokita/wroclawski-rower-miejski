@@ -1,6 +1,7 @@
 import pandas as pd
-
 from sklearn.base import BaseEstimator, TransformerMixin
+
+from bikerentals.src.utils.logging import logger
 
 
 class SeasonFeature(BaseEstimator, TransformerMixin):
@@ -23,10 +24,10 @@ class SeasonFeature(BaseEstimator, TransformerMixin):
     def transform(self, X):
         assert isinstance(X, pd.DataFrame)
 
-        print("* SeasonFeature *")
-        print("--> input data shape: ", X.shape)
+        logger.info("* SeasonFeature *")
+        logger.info(f"--> input data shape: {X.shape}")
 
         X[self.output_col] = (X[self.input_col].dt.month % 12 + 3) // 3
 
-        print("--> output data shape: ", X.shape)
+        logger.info(f"--> output data shape: {X.shape}")
         return X

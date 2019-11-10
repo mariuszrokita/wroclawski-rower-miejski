@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from bikerentals.src.utils.logging import logger
+
 
 class HourFeature(BaseEstimator, TransformerMixin):
     """
@@ -20,10 +22,10 @@ class HourFeature(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
-        print("* HourFeature *")
-        print("--> input data shape: ", X.shape)
+        logger.info("* HourFeature *")
+        logger.info(f"--> input data shape: {X.shape}")
 
         X[self.output_col] = X[self.input_col].dt.hour
 
-        print("--> output data shape: ", X.shape)
+        logger.info(f"--> output data shape: {X.shape}")
         return X

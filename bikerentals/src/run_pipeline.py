@@ -10,6 +10,7 @@ from bikerentals.src.data.pipeline import DataIngestion
 from bikerentals.src.cleaning.pipeline import DataCleaning
 from bikerentals.src.features.pipeline import DataFeaturization
 from bikerentals.src.utils.argparse import str2bool
+from bikerentals.src.utils.logging import logger
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
@@ -44,7 +45,7 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
     # save as csv
     save_dirname = os.path.join(processed_data_folder_path, '{}.csv'.format(save_base_name))
     df.to_csv(save_dirname, index=False)
-    print(f"Data saved to: {save_dirname}")
+    logger.info(f"Data saved to: {save_dirname}")
 
 
 if __name__ == "__main__":
@@ -56,11 +57,11 @@ if __name__ == "__main__":
                         type=str, default='bike_rentals', dest='save_base_name')
     args = parser.parse_args()
 
-    print("Script execution started")
+    logger.info("Script execution started")
 
     # Set project root folder
     mini_project_root_folder = os.path.abspath(os.path.join(os.getcwd(), '..'))
-    print(f'Root folder set to: {mini_project_root_folder}')
+    logger.info(f'Root folder set to: {mini_project_root_folder}')
 
     # Set up paths to data folders
     raw_data_folder_path = os.path.join(mini_project_root_folder, 'data', 'raw')
@@ -79,8 +80,8 @@ if __name__ == "__main__":
         container_name = local_settings['Values']['storage_container_name']
 
     # execute pipeline
-    print("Pipeline execution about to start")
+    logger.info("Pipeline execution about to start")
     execute_pipeline(account_name, account_key, container_name,
                      raw_data_folder_path, processed_data_folder_path,
                      args.hard_delete, args.save_base_name)
-    print("Pipeline execution completed")
+    logger.info("Pipeline execution completed")

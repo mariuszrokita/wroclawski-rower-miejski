@@ -3,6 +3,8 @@ import pandas as pd
 from dateutil.parser import parse
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from bikerentals.src.utils.logging import logger
+
 
 class HolidaysFeature(BaseEstimator, TransformerMixin):
     """
@@ -28,8 +30,8 @@ class HolidaysFeature(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
-        print("* HolidaysFeature *")
-        print("--> input data shape: ", X.shape)
+        logger.info("* HolidaysFeature *")
+        logger.info(f"--> input data shape: {X.shape}")
 
         # calculate based on provided list of holidays
         dates = [parse(date) for date in self.holidays_dates]
@@ -39,5 +41,5 @@ class HolidaysFeature(BaseEstimator, TransformerMixin):
             # The day numbers: Monday=0, Sunday=6
             X[self.output_col] = (X[self.output_col] | (X[self.input_col].dt.dayofweek == 6))
 
-        print("--> output data shape: ", X.shape)
+        logger.info(f"--> output data shape: {X.shape}")
         return X
