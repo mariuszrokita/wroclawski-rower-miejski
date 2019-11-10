@@ -13,7 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 First of all, create a brand new virtual environment to have an isolated workspace with specific package installs. It is extremely useful when developing multiple projects that require different dependencies.
 
 ```bash
-conda create --name nextbike python=3.6.8
+conda create --name nextbike python=3.6.8 jupyter
 conda activate nextbike
 ```
 
@@ -21,7 +21,7 @@ conda activate nextbike
 
 ```bash
 pip install --upgrade pip
-pip install -U -r requirements.txt
+pip install -r requirements.txt
 ```
 
 It is also worth installing the Jupyter Notebook Extensions:

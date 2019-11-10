@@ -2,8 +2,9 @@ import os
 
 from azure.storage.blob import BlockBlobService
 
+
 class BikeRentalDataDownloader:
-    
+
     def __init__(self, account_name, account_key, container_name):
         self.block_blob_service = BlockBlobService(account_name, account_key)
         self.container_name = container_name
@@ -14,7 +15,7 @@ class BikeRentalDataDownloader:
         """
         generator = self.block_blob_service.list_blobs(self.container_name)
         blob_names = [blob.name for blob in generator]
-        
+
         for name in blob_names:
             file_path = os.path.join(target_folder, name)
             if not os.path.exists(file_path):

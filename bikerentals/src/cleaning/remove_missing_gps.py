@@ -1,6 +1,8 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
+from bikerentals.src.utils.logging import logger
+
 
 class MissingGpsLocationRemover(BaseEstimator, TransformerMixin):
     """
@@ -22,8 +24,8 @@ class MissingGpsLocationRemover(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
-        print("* MissingGpsLocationRemover *")
-        print("--> input data shape: ", X.shape)
+        logger.info("* MissingGpsLocationRemover *")
+        logger.info(f"--> input data shape: {X.shape}")
 
         # create 'flag' column if it's not there yet
         if self.flag_col not in X.columns:
@@ -33,5 +35,5 @@ class MissingGpsLocationRemover(BaseEstimator, TransformerMixin):
         for gps_location_column in self.gps_location_cols:
             X[self.flag_col] = (X[self.flag_col] | (X[gps_location_column].isnull()))
 
-        print("--> output data shape: ", X.shape)
+        logger.info(f"--> output data shape: {X.shape}")
         return X
