@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.utils.logging import log_transformation
 
 
 class DayOfWeekFeature(BaseEstimator, TransformerMixin):
@@ -21,14 +21,11 @@ class DayOfWeekFeature(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
+    @log_transformation(stage='DayOfWeekFeature', indent_level=1)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
-
-        logger.info("* DayOfWeekFeature *")
-        logger.info(f"--> input data shape: {X.shape}")
 
         # Make day numbers: Monday=1, Sunday=7
         X[self.output_col] = (X[self.input_col].dt.dayofweek + 1)
 
-        logger.info(f"--> output data shape: {X.shape}")
         return X

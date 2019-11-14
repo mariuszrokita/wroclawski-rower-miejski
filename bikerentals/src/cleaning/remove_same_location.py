@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.utils.logging import log_transformation
 
 
 class SameLocationRemover(BaseEstimator, TransformerMixin):
@@ -17,11 +17,9 @@ class SameLocationRemover(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
+    @log_transformation(stage='SameLocationRemover', indent_level=1)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
-
-        logger.info("* SameLocationRemover *")
-        logger.info(f"--> input data shape: {X.shape}")
 
         # create 'flag' column if it's not there yet
         if self.flag_col not in X.columns:
@@ -30,5 +28,4 @@ class SameLocationRemover(BaseEstimator, TransformerMixin):
         # flag records for deletion
         X[self.flag_col] = (X[self.flag_col] | (X[self.rental_station_col] == X[self.return_station_col]))
 
-        logger.info(f"--> output data shape: {X.shape}")
         return X

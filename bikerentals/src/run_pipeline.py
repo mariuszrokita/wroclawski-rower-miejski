@@ -80,8 +80,8 @@ if __name__ == "__main__":
         container_name = local_settings['Values']['storage_container_name']
 
     # execute pipeline
-    logger.info("Pipeline execution about to start")
+    logger.info("Pipeline execution about to start!")
     execute_pipeline(account_name, account_key, container_name,
                      raw_data_folder_path, processed_data_folder_path,
                      args.hard_delete, args.save_base_name)
-    logger.info("Pipeline execution completed")
+    logger.info("Pipeline execution completed!")

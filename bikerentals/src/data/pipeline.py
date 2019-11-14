@@ -1,11 +1,12 @@
 import pandas as pd
+
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from bikerentals.src.data.data_concatenation import combine_datasets
 from bikerentals.src.data.bike_rental_data_downloader import BikeRentalDataDownloader
 from bikerentals.src.data.bike_rental_records import BikeRentalRecords
 from bikerentals.src.data.bike_station_locations import BikeStationsLocations
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.utils.logging import log_transformation
 
 
 class DataIngestion(BaseEstimator, TransformerMixin):
@@ -29,9 +30,8 @@ class DataIngestion(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
+    @log_transformation(stage='DataIngestion', indent_level=0)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        logger.info("****** DataIngestion stage ******")
-
         # Download all bike rental data from Azure Blob Storage and save it locally
         blob_downloader = BikeRentalDataDownloader(self.account_name, self.account_key,
                                                    self.bike_rental_data_container_name)
@@ -45,5 +45,4 @@ class DataIngestion(BaseEstimator, TransformerMixin):
 
         # Combine everything together and return one dataset
         df = combine_datasets(bike_rentals_df, bike_stations_df)
-        logger.info(f"DataIngestion - output data shape: {df.shape}")
         return df
