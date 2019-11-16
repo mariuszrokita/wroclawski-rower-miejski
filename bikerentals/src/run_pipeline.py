@@ -6,11 +6,11 @@ from sklearn.pipeline import make_pipeline
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '..', '..')))
 
-from bikerentals.src.data.pipeline import DataIngestion
-from bikerentals.src.cleaning.pipeline import DataCleaning
-from bikerentals.src.features.pipeline import DataFeaturization
-from bikerentals.src.utils.argparse import str2bool
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.data.pipeline import DataIngestion           # noqa: E402
+from bikerentals.src.cleaning.pipeline import DataCleaning        # noqa: E402
+from bikerentals.src.features.pipeline import DataFeaturization   # noqa: E402
+from bikerentals.src.utils.argparse import str2bool               # noqa: E402
+from bikerentals.src.utils.logging import logger                  # noqa: E402
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
