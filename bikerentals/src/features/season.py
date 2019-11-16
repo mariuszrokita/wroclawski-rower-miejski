@@ -21,7 +21,7 @@ class SeasonFeature(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
-    @log_transformation(stage='SeasonFeature', indent_level=1)
+    @log_transformation(stage='SeasonFeature', indent_level=2)
     def transform(self, X):
         assert isinstance(X, pd.DataFrame)
 

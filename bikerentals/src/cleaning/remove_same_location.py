@@ -17,7 +17,7 @@ class SameLocationRemover(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
-    @log_transformation(stage='SameLocationRemover', indent_level=1)
+    @log_transformation(stage='SameLocationRemover', indent_level=2)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 

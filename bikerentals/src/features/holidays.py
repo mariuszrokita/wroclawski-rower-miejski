@@ -27,7 +27,7 @@ class HolidaysFeature(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
-    @log_transformation(stage='HolidaysFeature', indent_level=1)
+    @log_transformation(stage='HolidaysFeature', indent_level=2)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 

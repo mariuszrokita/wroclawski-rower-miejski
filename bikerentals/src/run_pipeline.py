@@ -2,22 +2,19 @@ import argparse
 import json
 import os
 import sys
-from sklearn.pipeline import make_pipeline
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '..', '..')))
 
-from bikerentals.src.data.pipeline import DataIngestion           # noqa: E402
-from bikerentals.src.cleaning.pipeline import DataCleaning        # noqa: E402
-from bikerentals.src.features.pipeline import DataFeaturization   # noqa: E402
-from bikerentals.src.utils.argparse import str2bool               # noqa: E402
-from bikerentals.src.utils.logging import logger                  # noqa: E402
+from bikerentals.src.preparation.pipeline import DataPreparationPipeline  # noqa: E402
+from bikerentals.src.utils.argparse import str2bool                       # noqa: E402
+from bikerentals.src.utils.logging import logger                          # noqa: E402
 
 
 def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
                      raw_data_folder_path, processed_data_folder_path, hard_delete,
                      save_base_name):
     """
-    Scaffold end execute entire pipeline: data loading, cleaning and feature engineering.
+    Execute entire pipeline: data loading, cleaning and feature engineering.
 
     Parameters:
     * account_name - Azure Storage account name
@@ -29,14 +26,9 @@ def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
     * save_base_name - The output dataset file base name
     """
 
-    data_prep_pipeline = make_pipeline(
-        # data loading
-        DataIngestion(account_name, account_key, bike_rental_data_container_name, raw_data_folder_path),
-        # data cleaning
-        DataCleaning(hard_delete),
-        # data processing
-        DataFeaturization()
-    )
+    data_prep_pipeline = DataPreparationPipeline(account_name, account_key,
+                                                 bike_rental_data_container_name,
+                                                 raw_data_folder_path, hard_delete)
 
     # we're starting off our pipeline with no initiall data to process - we basically
     # need to ingest it first, and then process it.

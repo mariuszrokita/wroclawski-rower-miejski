@@ -24,7 +24,7 @@ class DataFeaturization(BaseEstimator, TransformerMixin):
         # - average speed
         # - weather, forecasted weather
         # - distance to nearest university, cinema etc.
-        self.data_processing_pipeline = make_pipeline(
+        self.data_featurization_pipeline = make_pipeline(
             SeasonFeature('Rental datetime', 'Season'),
             HolidaysFeature('Rental datetime', 'Holidays', holiday_dates),
             DayOfWeekFeature('Rental datetime', 'Rental day of week'),
@@ -37,9 +37,9 @@ class DataFeaturization(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
-    @log_transformation(stage='DataFeaturization', indent_level=0)
+    @log_transformation(stage='DataFeaturization', indent_level=1)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
         # execute pipeline
-        return self.data_processing_pipeline.transform(X)
+        return self.data_featurization_pipeline.transform(X)

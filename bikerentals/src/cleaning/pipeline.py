@@ -35,7 +35,7 @@ class DataCleaning(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
-    @log_transformation(stage='DataCleaning', indent_level=0)
+    @log_transformation(stage='DataCleaning', indent_level=1)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
