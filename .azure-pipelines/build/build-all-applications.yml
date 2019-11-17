@@ -10,7 +10,7 @@ variables:
   python.version: '3.6'
 
 stages:
-  - stage: Build environment and test Python code
+  - stage: BuildEnvironmentAndTestPythonCode
     jobs:
       - job: BuildEnvironment
         pool:
@@ -52,8 +52,8 @@ stages:
               codeCoverageTool: Cobertura
               summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
 
-  - stage: Build and package Azure Function app
-    dependsOn: Build and test
+  - stage: BuildAndPackageAzureFunctionApp
+    dependsOn: BuildEnvironmentAndTestPythonCode
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
