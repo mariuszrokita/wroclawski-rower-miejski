@@ -46,8 +46,30 @@ steps:
     codeCoverageTool: Cobertura
     summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
 
-- task: PublishBuildArtifacts@1
+- task: AzureCLI@1
+  displayName: 'Install func host runtime'
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+    azureSubscription: 'Azure Primary'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+      sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+      
+      sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
+      sudo apt-get update
+      
+      sudo apt-get install azure-functions-core-tools
+
+- task: AzureCLI@1
+  displayName: 'Pack python functions'
+  inputs:
+    azureSubscription: 'Azure Primary'
+    scriptLocation: inlineScript
+    inlineScript: 'func pack --python --build remote'
+    workingDirectory: 'AzureFunctions-Python'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: AzureFunctions-Python'
+  inputs:
+    PathtoPublish: 'AzureFunctions-Python'
+    ArtifactName: 'AzureFunctions-Python'
