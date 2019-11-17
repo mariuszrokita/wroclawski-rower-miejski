@@ -107,6 +107,7 @@ stages:
                             -WEBSITE_RUN_FROM_PACKAGE 1
                             -ENABLE_ORYX_BUILD true
                             -SCM_DO_BUILD_DURING_DEPLOYMENT true'
+              runtimeStack: Python
 
           # - task: AzureRmWebAppDeployment@4
           #   displayName: 'Deploy Azure Function App'
