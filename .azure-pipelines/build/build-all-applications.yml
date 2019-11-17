@@ -56,10 +56,10 @@ stages:
       - job: BuildAndPackage
         steps:
           - bash: |
-            if [ -f extensions.csproj ]
-            then
-                dotnet build extensions.csproj --output ./bin
-            fi
+              if [ -f extensions.csproj ]
+              then
+                  dotnet build extensions.csproj --output ./bin
+              fi
             displayName: 'Build extensions'
 
           - task: UsePythonVersion@0
@@ -68,10 +68,10 @@ stages:
               versionSpec: 3.6
 
           - bash: |
-            python3.6 -m venv worker_venv
-            source worker_venv/bin/activate
-            pip3.6 install setuptools
-            pip3.6 install -r requirements.txt
+              python3.6 -m venv worker_venv
+              source worker_venv/bin/activate
+              pip3.6 install setuptools
+              pip3.6 install -r requirements.txt
             displayName: 'Install Application Dependencies'
 
           - task: ArchiveFiles@2
