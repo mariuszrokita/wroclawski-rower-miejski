@@ -117,7 +117,7 @@ stages:
           - task: DownloadPipelineArtifact@2
             inputs:
               artifact: AzureFunctions-Python
-              targetPath: '$(Pipeline.Workspace)'
+              targetPath: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
 
           - task: AzureFunctionApp@1
             displayName: 'Deploy'
