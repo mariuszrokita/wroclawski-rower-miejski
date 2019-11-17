@@ -77,7 +77,7 @@ stages:
             displayName: 'Publish Artifact'
             inputs:
               PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-              name: 'AzureFunctionsAppPython'
+              name: 'drop'
 
   - stage: DeployAzureFunctionApp
     dependsOn: BuildAndPackageAzureFunctionApp
@@ -88,8 +88,8 @@ stages:
         steps:
           - task: DownloadPipelineArtifact@2
             inputs:
-              artifact: AzureFunctionsAppPython
-              targetPath: '$(Pipeline.Workspace)/AzureFunctionsAppPython'
+              artifact: drop
+              targetPath: '$(Pipeline.Workspace)/drop'
 
           - task: AzureFunctionApp@1
             displayName: 'Deploy Azure Function App'
@@ -97,7 +97,7 @@ stages:
               azureSubscription: '$(Parameters.AzureSubscription)'
               appType: functionAppLinux
               appName: '$(Parameters.AppName)'
-              package: '$(Pipeline.Workspace)/AzureFunctionsAppPython/build$(Build.BuildId).zip'
+              package: '$(Pipeline.Workspace)/drop/build$(Build.BuildId).zip'
 
           # - task: AzureRmWebAppDeployment@4
           #   inputs:
