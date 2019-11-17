@@ -49,7 +49,7 @@ stages:
               summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
 
   - stage: BuildAndPackageAzureFunctionApp
-    dependsOn: BuildEnvironmentAndTestPythonCode
+    dependsOn: BuildEnvAndTestPythonCode
     pool:
       vmImage: 'ubuntu-latest'
     jobs:
