@@ -99,7 +99,7 @@ stages:
               azureSubscription: '$(Parameters.AzureSubscription)'
               scriptLocation: inlineScript
               inlineScript: 'func pack --python --build remote'
-              workingDirectory: 'AzureFunctions-Python'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
 
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Artifact: AzureFunctions-Python'
@@ -116,7 +116,7 @@ stages:
         steps:
 
           - task: AzureFunctionApp@1
-            displayName: 'Deploy: functions-python-fd2019-dev'
+            displayName: 'Deploy'
             inputs:
               azureSubscription: '$(Parameters.AzureSubscription)'
               appType: functionAppLinux
