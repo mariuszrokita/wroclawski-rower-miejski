@@ -103,4 +103,6 @@ stages:
                             -storage_account_key $(dev.storage_account_key)
                             -bike_rentals_container_name $(dev.bike_rentals_container_name)
                             -bike_availability_data_url $(dev.bike_availability_data_url)
-                            -bike_availability_container_name $(dev.bike_availability_container_name)'
+                            -bike_availability_container_name $(dev.bike_availability_container_name)
+                            -ENABLE_ORYX_BUILD true
+                            -SCM_DO_BUILD_DURING_DEPLOYMENT true'
