@@ -71,11 +71,13 @@ stages:
             inputs:
               rootFolderOrFile: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
               includeRootFolder: false
+              archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
 
           - task: PublishBuildArtifacts@1
-            displayName: 'Publish Artifact: AzureFunctionAppPython'
+            displayName: 'Publish Artifact: drop'
             inputs:
-              ArtifactName: AzureFunctionAppPython
+              PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
+              name: 'drop'
 
   - stage: DeployAzureFunctionApp
     dependsOn: BuildAndPackageAzureFunctionApp
@@ -90,4 +92,3 @@ stages:
               azureSubscription: '$(Parameters.AzureSubscription)'
               appType: 'functionAppLinux'
               appName: '$(Parameters.AppName)'
-              package: '$(System.DefaultWorkingDirectory)//*.zip'
