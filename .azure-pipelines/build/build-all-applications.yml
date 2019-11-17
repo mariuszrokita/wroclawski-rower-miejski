@@ -98,10 +98,9 @@ stages:
               appType: functionAppLinux
               appName: '$(Parameters.AppName)'
               package: '$(Pipeline.Workspace)/drop/build$(Build.BuildId).zip'
-
-          # - task: AzureRmWebAppDeployment@4
-          #   inputs:
-          #     connectionType: 'AzureRM'
-          #     azureSubscription: '$(Parameters.AzureSubscription)'
-          #     appType: 'functionAppLinux'
-          #     webAppName: '$(Parameters.AppName)'
+              appSettings: '-historic_records_url $(dev.historic_records_url) 
+                            -storage_account_name $(dev.storage_account_name)
+                            -storage_account_key $(dev.storage_account_key)
+                            -bike_rentals_container_name $(dev.bike_rentals_container_name)
+                            -bike_availability_data_url $(dev.bike_availability_data_url)
+                            -bike_availability_container_name $(dev.bike_availability_container_name)'

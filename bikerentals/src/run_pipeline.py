@@ -69,11 +69,11 @@ if __name__ == "__main__":
 
         account_name = local_settings['Values']['storage_account_name']
         account_key = local_settings['Values']['storage_account_key']
-        container_name = local_settings['Values']['storage_container_name']
+        bike_rentals_container_name = local_settings['Values']['bike_rentals_container_name']
 
     # execute pipeline
     logger.info("Pipeline execution about to start!")
-    execute_pipeline(account_name, account_key, container_name,
+    execute_pipeline(account_name, account_key, bike_rentals_container_name,
                      raw_data_folder_path, processed_data_folder_path,
                      args.hard_delete, args.save_base_name)
     logger.info("Pipeline execution completed!")

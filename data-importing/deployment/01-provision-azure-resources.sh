@@ -30,6 +30,19 @@ az storage account create \
     --kind StorageV2 \
     --access-tier Cool
 
+echo "*** STEP 5: Create storage containers... ***"
+az storage container create \
+    --name $BIKE_RENTALS_CONTAINER_NAME \
+    --account-name $STORAGE_NAME \
+    --public-access off \
+    --subscription $SUBSCRIPTION_ID
+
+az storage container create \
+    --name $BIKE_AVAILABILITY_CONTAINER_NAME \
+    --account-name $STORAGE_NAME \
+    --public-access off \
+    --subscription $SUBSCRIPTION_ID
+
 echo "*** STEP 5: Creating function app... ***"
 az functionapp create \
     --name $FUNCTION_APP_NAME \
