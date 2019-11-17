@@ -98,13 +98,13 @@ stages:
             inputs:
               azureSubscription: '$(Parameters.AzureSubscription)'
               scriptLocation: inlineScript
-              inlineScript: 'func pack --python --build remote'
+              inlineScript: 'func pack --python --build-native-deps'
               workingDirectory: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
 
           - task: PublishBuildArtifacts@1
-            displayName: 'Publish Artifact: AzureFunctions-Python'
+            displayName: 'Publish Artifact'
             inputs:
-              PathtoPublish: 'AzureFunctions-Python'
+              PathtoPublish: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
               ArtifactName: 'AzureFunctions-Python'
 
   - stage: DeployAzureFunctionApp
