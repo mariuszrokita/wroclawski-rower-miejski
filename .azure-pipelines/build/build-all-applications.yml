@@ -70,7 +70,7 @@ stages:
           - bash: |
               python -m pip install --upgrade pip
               pip install setuptools
-              pip install -r requirements.txt
+              pip install -r $(System.DefaultWorkingDirectory)/data-importing/azurefunctions/requirements.txt
             displayName: 'Install Application Dependencies'
 
           - task: ArchiveFiles@2
