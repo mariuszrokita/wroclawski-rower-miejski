@@ -90,4 +90,4 @@ stages:
               azureSubscription: '$(Parameters.AzureSubscription)'
               appType: 'functionAppLinux'
               appName: '$(Parameters.AppName)'
-              package: '$(System.DefaultWorkingDirectory)/*.zip'
+              package: '$(System.DefaultWorkingDirectory)//*.zip'
