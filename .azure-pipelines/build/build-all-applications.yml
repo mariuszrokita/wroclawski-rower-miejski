@@ -26,11 +26,6 @@ stages:
               pip install -r requirements.txt
             displayName: 'Install dependencies'
 
-      - job: TestPythonCode
-        dependsOn: BuildEnvironment
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
           - script: |
               pip install flake8
               flake8 .
