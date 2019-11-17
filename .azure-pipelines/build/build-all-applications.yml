@@ -74,10 +74,10 @@ stages:
               archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
 
           - task: PublishBuildArtifacts@1
-            displayName: 'Publish Artifact: drop'
+            displayName: 'Publish Artifact'
             inputs:
               PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-              name: 'drop'
+              name: 'AzureFunctionsAppPython'
 
   - stage: DeployAzureFunctionApp
     dependsOn: BuildAndPackageAzureFunctionApp
@@ -86,17 +86,22 @@ stages:
     jobs:
       - job: Deploy
         steps:
-          # - task: AzureFunctionApp@1
-          #   displayName: 'Deploy Azure Function App'
-          #   inputs:
-          #     azureSubscription: '$(Parameters.AzureSubscription)'
-          #     appType: functionAppLinux
-          #     appName: '$(Parameters.AppName)'
-          #     package: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-
-          - task: AzureRmWebAppDeployment@4
+          - task: DownloadPipelineArtifact@2
             inputs:
-              connectionType: 'AzureRM'
+              artifact: AzureFunctionsAppPython
+              targetPath: '$(Pipeline.Workspace)/AzureFunctionsAppPython'
+
+          - task: AzureFunctionApp@1
+            displayName: 'Deploy Azure Function App'
+            inputs:
               azureSubscription: '$(Parameters.AzureSubscription)'
-              appType: 'functionAppLinux'
-              webAppName: '$(Parameters.AppName)'
+              appType: functionAppLinux
+              appName: '$(Parameters.AppName)'
+              package: '$(Pipeline.Workspace)/AzureFunctionsAppPython/build$(Build.BuildId).zip'
+
+          # - task: AzureRmWebAppDeployment@4
+          #   inputs:
+          #     connectionType: 'AzureRM'
+          #     azureSubscription: '$(Parameters.AzureSubscription)'
+          #     appType: 'functionAppLinux'
+          #     webAppName: '$(Parameters.AppName)'
