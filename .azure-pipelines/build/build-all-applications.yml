@@ -55,13 +55,6 @@ stages:
     jobs:
       - job: BuildAndPackage
         steps:
-          # - bash: |
-          #     if [ -f extensions.csproj ]
-          #     then
-          #         dotnet build extensions.csproj --output ./bin
-          #     fi
-          #   displayName: 'Build extensions'
-
           - task: UsePythonVersion@0
             displayName: 'Use Python 3.6'
             inputs:
@@ -83,3 +76,18 @@ stages:
             displayName: 'Publish Artifact: AzureFunctionAppPython'
             inputs:
               ArtifactName: AzureFunctionAppPython
+
+  - stage: DeployAzureFunctionApp
+    dependsOn: BuildAndPackageAzureFunctionApp
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: Deploy
+        steps:
+          - task: AzureFunctionApp@1
+            displayName: 'Deploy Azure Function App'
+            inputs:
+              azureSubscription: '$(Parameters.AzureSubscription)'
+              appType: 'functionAppLinux'
+              appName: '$(Parameters.AppName)'
+              package: '$(System.DefaultWorkingDirectory)/AzureFunctionAppPython/*.zip'
