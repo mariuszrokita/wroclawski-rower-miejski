@@ -114,6 +114,10 @@ stages:
     jobs:
       - job: Deploy
         steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: AzureFunctions-Python
+              targetPath: '$(Pipeline.Workspace)'
 
           - task: AzureFunctionApp@1
             displayName: 'Deploy'
@@ -121,7 +125,7 @@ stages:
               azureSubscription: '$(Parameters.AzureSubscription)'
               appType: functionAppLinux
               appName: '$(Parameters.AppName)'
-              package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python.zip'
+              package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
               appSettings: '-historic_records_url $(dev.historic_records_url) 
                             -storage_account_name $(dev.storage_account_name)
                             -storage_account_key $(dev.storage_account_key)
