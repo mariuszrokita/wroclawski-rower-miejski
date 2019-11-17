@@ -108,7 +108,7 @@ stages:
                             -ENABLE_ORYX_BUILD true
                             -SCM_DO_BUILD_DURING_DEPLOYMENT true'
               runtimeStack: Python
-              startupCommand: 'func azure functionapp publish $(Parameters.AppName) --build remote'
+              startupCommand: 'func azure functionapp publish $(Parameters.AppName) --python --build-native-deps'
 
           # - task: AzureRmWebAppDeployment@4
           #   displayName: 'Deploy Azure Function App'
