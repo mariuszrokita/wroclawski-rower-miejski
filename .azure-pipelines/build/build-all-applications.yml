@@ -6,70 +6,57 @@ trigger:
       - master
       - develop
 
-pool:
-  vmImage: 'ubuntu-latest'
-strategy:
-  matrix:
-    Python36:
-      python.version: '3.6'
+variables:
+  python.version: '3.6'
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+stages:
+  - stage: Build environment and test Python code
+    jobs:
+      - job: BuildEnvironment
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(python.version)'
+            displayName: 'Use Python $(python.version)'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            displayName: 'Install dependencies'
 
-- script: |
-    python -m pip install flake8
-    flake8 .
-  displayName: 'Run lint tests'
+      - job: TestPythonCode
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - script: |
+              python -m pip install flake8
+              flake8 .
+            displayName: 'Run lint tests'
 
-- script: |
-    pip install pytest
-    pip install pytest-cov
-    pytest --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
-  displayName: 'Test with pytest'
+          - script: |
+              pip install pytest
+              pip install pytest-cov
+              pytest --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+            displayName: 'Test with pytest'
 
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
-  inputs:
-    testResultsFiles: '**/test-*.xml'
-    testRunTitle: 'Publish test results for Python $(python.version)'
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: '**/test-*.xml'
+              testRunTitle: 'Publish test results for Python $(python.version)'
 
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: Cobertura
-    summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
 
-- task: AzureCLI@1
-  displayName: 'Install func host runtime'
-  inputs:
-    azureSubscription: 'Azure Primary'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-      sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
-      
-      sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
-      sudo apt-get update
-      
-      sudo apt-get install azure-functions-core-tools
-
-- task: AzureCLI@1
-  displayName: 'Pack python functions'
-  inputs:
-    azureSubscription: 'Azure Primary'
-    scriptLocation: inlineScript
-    inlineScript: 'func pack --python --build remote'
-    workingDirectory: 'data-importing/azurefunctions'
-
-- task: PublishBuildArtifacts@1
-  displayName: 'Publish Artifact: AzureFunctions-Python'
-  inputs:
-    PathtoPublish: 'AzureFunctions-Python'
-    ArtifactName: 'AzureFunctions-Python'
+  - stage: Build and package Azure Function app
+    dependsOn: Build and test
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: BuildAndPackage
+        steps:
+          - bash: echo "here we will build Azure Function app"
