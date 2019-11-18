@@ -3,7 +3,7 @@ import pandas as pd
 from geopy.distance import geodesic
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.utils.logging import log_transformation
 
 
 class DistanceFeature(BaseEstimator, TransformerMixin):
@@ -27,11 +27,9 @@ class DistanceFeature(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
+    @log_transformation(stage='DistanceFeature', indent_level=2)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
-
-        logger.info("* DistanceFeature *")
-        logger.info(f"--> input data shape: {X.shape}")
 
         cache = {}
 
@@ -68,5 +66,4 @@ class DistanceFeature(BaseEstimator, TransformerMixin):
         # calculate distance for every non-NaN row
         X.loc[~nans, self.output_col] = X[~nans].apply(lambda x: calculate_distance(x), axis=1)
 
-        logger.info(f"--> output data shape: {X.shape}")
         return X

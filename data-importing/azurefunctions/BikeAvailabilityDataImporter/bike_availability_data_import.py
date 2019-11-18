@@ -1,5 +1,5 @@
 """
-This module contains functions to import bike availability data 
+This module contains functions to import bike availability data
 and to persist them in Azure Blob Storage.
 """
 
@@ -24,7 +24,7 @@ def import_bike_availability_data(url, account_name, account_key, container_name
 
     now = datetime.now()
 
-    # HACK: compare 'offset' and 'total' values returned from API to determine 
+    # HACK: compare 'offset' and 'total' values returned from API to determine
     for offset in [0, 100, 200]:
         url_with_offset = f'{url}&offset={offset}'
         data = get_bike_availability_data(url_with_offset)

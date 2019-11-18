@@ -8,7 +8,7 @@ from bikerentals.src.features.holidays import HolidaysFeature
 from bikerentals.src.features.hour import HourFeature
 from bikerentals.src.features.month import MonthFeature
 from bikerentals.src.features.season import SeasonFeature
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.utils.logging import log_transformation
 
 holiday_dates = [
     '2019-01-01', '2019-01-06', '2019-04-21', '2019-04-22', '2019-05-01',
@@ -24,7 +24,7 @@ class DataFeaturization(BaseEstimator, TransformerMixin):
         # - average speed
         # - weather, forecasted weather
         # - distance to nearest university, cinema etc.
-        self.data_processing_pipeline = make_pipeline(
+        self.data_featurization_pipeline = make_pipeline(
             SeasonFeature('Rental datetime', 'Season'),
             HolidaysFeature('Rental datetime', 'Holidays', holiday_dates),
             DayOfWeekFeature('Rental datetime', 'Rental day of week'),
@@ -37,14 +37,9 @@ class DataFeaturization(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
+    @log_transformation(stage='DataFeaturization', indent_level=1)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
 
-        logger.info("****** DataFeaturization stage ******")
-        logger.info(f"DataFeaturization - input data shape: {X.shape}")
-
         # execute pipeline
-        X = self.data_processing_pipeline.transform(X)
-
-        logger.info(f"DataFeaturization - output data shape: {X.shape}")
-        return X
+        return self.data_featurization_pipeline.transform(X)

@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.utils.logging import log_transformation
 
 
 class GpsFromStationNameExtractor(BaseEstimator, TransformerMixin):
@@ -16,11 +16,9 @@ class GpsFromStationNameExtractor(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
+    @log_transformation(stage='GpsFromStationNameExtractor', indent_level=2)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
-
-        logger.info(f"* GpsFromStationNameExtractor *")
-        logger.info(f"--> input data shape: {X.shape}")
 
         # find rows that have gps coordinates in the 'station name' column
         idx = X[X[self.station_col].str.contains(r'\d{2}.\d+, \d{2}.\d+', regex=True)].index
@@ -29,5 +27,4 @@ class GpsFromStationNameExtractor(BaseEstimator, TransformerMixin):
             X.loc[idx, self.latitude_col] = gps_coordinates[0].astype('float')
             X.loc[idx, self.longitude_col] = gps_coordinates[1].astype('float')
 
-        logger.info(f"--> output data shape: {X.shape}")
         return X

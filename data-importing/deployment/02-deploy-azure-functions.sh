@@ -21,7 +21,7 @@ echo "*** STEP 4: Set environment variables... ***"
 historic_records_url=`jq -r '.Values.historic_records_url' local.settings.json`
 storage_account_name=`jq -r '.Values.storage_account_name' local.settings.json`
 storage_account_key=`jq -r '.Values.storage_account_key' local.settings.json`
-storage_container_name=`jq -r '.Values.storage_container_name' local.settings.json`
+bike_rentals_container_name=`jq -r '.Values.bike_rentals_container_name' local.settings.json`
 bike_availability_data_url=`jq -r '.Values.bike_availability_data_url' local.settings.json`
 bike_availability_container_name=`jq -r '.Values.bike_availability_container_name' local.settings.json`
 
@@ -32,6 +32,6 @@ az functionapp config appsettings set \
 		historic_records_url=$historic_records_url \
 		storage_account_name=$storage_account_name \
 		storage_account_key=$storage_account_key \
-		storage_container_name=$storage_container_name \
+		bike_rentals_container_name=$bike_rentals_container_name \
 		bike_availability_data_url=$bike_availability_data_url \
 		bike_availability_container_name=$bike_availability_container_name

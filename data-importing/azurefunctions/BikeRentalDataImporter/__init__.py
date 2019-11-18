@@ -21,14 +21,14 @@ def main(mytimer: func.TimerRequest) -> None:
         historic_records_url = os.environ['historic_records_url']
         storage_account_name = os.environ['storage_account_name']
         storage_account_key = os.environ['storage_account_key']
-        storage_container_name = os.environ['storage_container_name']
+        storage_container_name = os.environ['bike_rentals_container_name']
 
         # run import
-        import_historic_csv_files(historic_records_url, 
-                                storage_account_name, 
-                                storage_account_key, 
-                                storage_container_name)
-                                
+        import_historic_csv_files(historic_records_url,
+                                  storage_account_name,
+                                  storage_account_key,
+                                  storage_container_name)
+
     except Exception as e:
         logging.error('Error:')
         logging.error(e, exc_info=True)

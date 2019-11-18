@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
-from bikerentals.src.utils.logging import logger
+from bikerentals.src.utils.logging import log_transformation
 
 
 class RecordsRemover(BaseEstimator, TransformerMixin):
@@ -16,11 +16,9 @@ class RecordsRemover(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
         return self
 
+    @log_transformation(stage='RecordsRemover', indent_level=2)
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         assert isinstance(X, pd.DataFrame)
-
-        logger.info("* RecordsRemover *")
-        logger.info(f"--> input data shape: {X.shape}")
 
         # delete permanently marked records if hard delete was chosen
         if self.hard_delete:
@@ -30,5 +28,4 @@ class RecordsRemover(BaseEstimator, TransformerMixin):
             # remove flag column
             X = X.drop([self.delete_flag_colname], axis=1)
 
-        logger.info(f"--> output data shape: {X.shape}")
         return X

@@ -20,15 +20,15 @@ def main(mytimer: func.TimerRequest) -> None:
         # configuration
         bike_availability_data_url = os.environ['bike_availability_data_url']
         storage_account_name = os.environ['storage_account_name']
-        storage_account_key = os.environ['storage_account_key']        
+        storage_account_key = os.environ['storage_account_key']
         storage_container_name = os.environ['bike_availability_container_name']
 
         # run import
-        import_bike_availability_data(bike_availability_data_url, 
-                                      storage_account_name, 
-                                      storage_account_key, 
+        import_bike_availability_data(bike_availability_data_url,
+                                      storage_account_name,
+                                      storage_account_key,
                                       storage_container_name)
-                                
+
     except Exception as e:
         logging.error('Error:')
         logging.error(e, exc_info=True)

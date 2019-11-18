@@ -1,4 +1,3 @@
-azure-cli
 requests
 beautifulsoup4
 azure-storage

@@ -1,0 +1,116 @@
+# More info: https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+  branches:
+    include: 
+      - master
+      - develop
+
+variables:
+  python.version: '3.6'
+
+stages:
+  - stage: BuildEnvAndTestPythonCode
+    jobs:
+      - job: BuildAndTest
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: '$(python.version)'
+            displayName: 'Use Python $(python.version)'
+
+          - script: |
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+            displayName: 'Install dependencies'
+
+          - script: |
+              pip install flake8
+              flake8 .
+            displayName: 'Run lint tests'
+
+          - script: |
+              pip install pytest
+              pip install pytest-cov
+              pytest --junitxml=junit/test-results.xml --cov=. --cov-report=xml --cov-report=html
+            displayName: 'Test with pytest'
+
+          - task: PublishTestResults@2
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: '**/test-*.xml'
+              testRunTitle: 'Publish test results for Python $(python.version)'
+
+          - task: PublishCodeCoverageResults@1
+            inputs:
+              codeCoverageTool: Cobertura
+              summaryFileLocation: '$(System.DefaultWorkingDirectory)/**/coverage.xml'
+
+  - stage: BuildAndPackageAzureFunctionApp
+    dependsOn: BuildEnvAndTestPythonCode
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: BuildAndPackage
+        steps:
+          - task: UsePythonVersion@0
+            displayName: 'Use Python 3.6'
+            inputs:
+              versionSpec: 3.6
+
+          - task: AzureCLI@1
+            displayName: 'Install func host runtime'
+            inputs:
+              azureSubscription: '$(Parameters.AzureSubscription)'
+              scriptLocation: inlineScript
+              inlineScript: |
+                curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+                sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+
+                sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-ubuntu-$(lsb_release -cs)-prod $(lsb_release -cs) main" > /etc/apt/sources.list.d/dotnetdev.list'
+                sudo apt-get update
+
+                sudo apt-get install azure-functions-core-tools
+
+          - task: AzureCLI@1
+            displayName: 'Pack python functions'
+            inputs:
+              azureSubscription: '$(Parameters.AzureSubscription)'
+              scriptLocation: inlineScript
+              inlineScript: 'func pack --python --build-native-deps'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
+
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Artifact'
+            inputs:
+              PathtoPublish: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
+              ArtifactName: 'AzureFunctions-Python-build$(Build.BuildId)'
+
+  - stage: DeployAzureFunctionApp
+    dependsOn: BuildAndPackageAzureFunctionApp
+    pool:
+      vmImage: 'ubuntu-latest'
+    jobs:
+      - job: Deploy
+        steps:
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: AzureFunctions-Python-build$(Build.BuildId)
+              targetPath: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
+
+          - task: AzureFunctionApp@1
+            displayName: 'Deploy Azure Function App'
+            inputs:
+              azureSubscription: '$(Parameters.AzureSubscription)'
+              appType: functionAppLinux
+              appName: '$(Parameters.AppName)'
+              package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
+              appSettings: '-historic_records_url $(dev.historic_records_url) 
+                            -storage_account_name $(dev.storage_account_name)
+                            -storage_account_key $(dev.storage_account_key)
+                            -bike_rentals_container_name $(dev.bike_rentals_container_name)
+                            -bike_availability_data_url $(dev.bike_availability_data_url)
+                            -bike_availability_container_name $(dev.bike_availability_container_name)'
+              runtimeStack: Python
