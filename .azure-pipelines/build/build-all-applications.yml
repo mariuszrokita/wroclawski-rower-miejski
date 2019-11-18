@@ -60,25 +60,6 @@ stages:
             inputs:
               versionSpec: 3.6
 
-          - bash: |
-              python -m pip install --upgrade pip
-              pip install setuptools
-              pip install -r $(System.DefaultWorkingDirectory)/data-importing/azurefunctions/requirements.txt
-            displayName: 'Install Application Dependencies'
-
-          # - task: ArchiveFiles@2
-          #   displayName: 'Archive files'
-          #   inputs:
-          #     rootFolderOrFile: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
-          #     includeRootFolder: false
-          #     archiveFile: "$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip"
-
-          # - task: PublishBuildArtifacts@1
-          #   displayName: 'Publish Artifact'
-          #   inputs:
-          #     PathtoPublish: '$(System.DefaultWorkingDirectory)/build$(Build.BuildId).zip'
-          #     name: 'drop'
-
           - task: AzureCLI@1
             displayName: 'Install func host runtime'
             inputs:
@@ -105,7 +86,7 @@ stages:
             displayName: 'Publish Artifact'
             inputs:
               PathtoPublish: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
-              ArtifactName: 'AzureFunctions-Python'
+              ArtifactName: 'AzureFunctions-Python-build$(Build.BuildId)'
 
   - stage: DeployAzureFunctionApp
     dependsOn: BuildAndPackageAzureFunctionApp
@@ -116,11 +97,11 @@ stages:
         steps:
           - task: DownloadPipelineArtifact@2
             inputs:
-              artifact: AzureFunctions-Python
+              artifact: AzureFunctions-Python-build$(Build.BuildId)
               targetPath: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
 
           - task: AzureFunctionApp@1
-            displayName: 'Deploy'
+            displayName: 'Deploy Azure Function App'
             inputs:
               azureSubscription: '$(Parameters.AzureSubscription)'
               appType: functionAppLinux
@@ -133,46 +114,3 @@ stages:
                             -bike_availability_data_url $(dev.bike_availability_data_url)
                             -bike_availability_container_name $(dev.bike_availability_container_name)'
               runtimeStack: Python
-
-          # - task: DownloadPipelineArtifact@2
-          #   inputs:
-          #     artifact: drop
-          #     targetPath: '$(Pipeline.Workspace)/drop'
-
-          # - task: AzureFunctionApp@1
-          #   displayName: 'Deploy Azure Function App'
-          #   inputs:
-          #     azureSubscription: '$(Parameters.AzureSubscription)'
-          #     appType: functionAppLinux
-          #     appName: '$(Parameters.AppName)'
-          #     package: '$(Pipeline.Workspace)/drop/build$(Build.BuildId).zip'
-          #     appSettings: '-historic_records_url $(dev.historic_records_url) 
-          #                   -storage_account_name $(dev.storage_account_name)
-          #                   -storage_account_key $(dev.storage_account_key)
-          #                   -bike_rentals_container_name $(dev.bike_rentals_container_name)
-          #                   -bike_availability_data_url $(dev.bike_availability_data_url)
-          #                   -bike_availability_container_name $(dev.bike_availability_container_name)
-          #                   -WEBSITE_RUN_FROM_PACKAGE 1
-          #                   -ENABLE_ORYX_BUILD true
-          #                   -SCM_DO_BUILD_DURING_DEPLOYMENT true'
-          #     runtimeStack: Python
-          #     startupCommand: 'func azure functionapp publish $(Parameters.AppName) --python --build-native-deps'
-
-          # - task: AzureRmWebAppDeployment@4
-          #   displayName: 'Deploy Azure Function App'
-          #   inputs:
-          #     connectionType: 'AzureRM'
-          #     azureSubscription: '$(Parameters.AzureSubscription)'
-          #     appType: functionAppLinux
-          #     webAppName: '$(Parameters.AppName)'
-          #     package: '$(Pipeline.Workspace)/drop/build$(Build.BuildId).zip'
-          #     appSettings: '-historic_records_url $(dev.historic_records_url) 
-          #                   -storage_account_name $(dev.storage_account_name)
-          #                   -storage_account_key $(dev.storage_account_key)
-          #                   -bike_rentals_container_name $(dev.bike_rentals_container_name)
-          #                   -bike_availability_data_url $(dev.bike_availability_data_url)
-          #                   -bike_availability_container_name $(dev.bike_availability_container_name)
-          #                   -ENABLE_ORYX_BUILD true
-          #                   -SCM_DO_BUILD_DURING_DEPLOYMENT true'
-          #     enableCustomDeployment: true
-          #     deploymentMethod: 'runFromPackage'
