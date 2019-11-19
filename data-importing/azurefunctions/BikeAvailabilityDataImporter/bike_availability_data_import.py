@@ -12,14 +12,30 @@ from datetime import datetime
 from azure.storage.blob import BlockBlobService
 
 
-def get_bike_availability_data(url):
+def get_bike_availability_data(url: str) -> str:
+    """Get bike availability data that is available at the provided address.
+
+    Arguments:
+        url {str} -- The URL address where we can find information about available bikes.
+
+    Returns:
+        str -- Data in a form of a JSON document.
+    """
     r = requests.get(url)
     # change the encoding for the request content
     r.encoding = 'utf-8'
     return r.text
 
 
-def import_bike_availability_data(url, account_name, account_key, container_name):
+def import_bike_availability_data(url: str, account_name: str, account_key: str, container_name: str) -> None:
+    """Import bike data availability and save it into Azure Blob Storage container.
+
+    Arguments:
+        url {str} -- The URL address where we can find information about available bikes.
+        account_name {str} -- The storage account name.
+        account_key {str} -- The storage account key.
+        container_name {str} -- Name of existing container.
+    """
     block_blob_service = BlockBlobService(account_name, account_key)
 
     now = datetime.now()
