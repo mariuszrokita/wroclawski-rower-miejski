@@ -18,7 +18,7 @@ class TestGpsFromStationNameExtractor:
 
         expected = {
             'UID': [1],
-            'Rental station': ['51.136671111111, 17.05744'],
+            'Rental station': ['Poza oficjalną stacją'],
             'Rental station latitude': [51.136671111111],
             'Rental station longitude': [17.05744]
         }
@@ -45,7 +45,7 @@ class TestGpsFromStationNameExtractor:
 
         expected = {
             'UID': [1],
-            'Return station': ['51.136671111111, 17.05744'],
+            'Return station': ['Poza oficjalną stacją'],
             'Return station latitude': [51.136671111111],
             'Return station longitude': [17.05744]
         }

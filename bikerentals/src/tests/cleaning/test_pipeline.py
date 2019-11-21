@@ -88,7 +88,7 @@ class TestDataCleaningPipeline:
 
         expected = {
             'UID': [1],
-            'Rental station': ['50.984208, 16.654945'],
+            'Rental station': ['Poza oficjalną stacją'],
             'Return station': ['Station A'],
             'Rental station latitude':  [50.984208],  # noqa E241
             'Rental station longitude': [16.654945],  # noqa E241
@@ -122,7 +122,7 @@ class TestDataCleaningPipeline:
         expected = {
             'UID': [1],
             'Rental station': ['Station A'],
-            'Return station': ['50.984208, 16.654945'],
+            'Return station': ['Poza oficjalną stacją'],
             'Rental station latitude':  [11.111],     # noqa E241
             'Rental station longitude': [22.22],      # noqa E241
             'Return station latitude':  [50.984208],  # noqa E241

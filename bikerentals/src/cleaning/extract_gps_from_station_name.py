@@ -33,5 +33,6 @@ class GpsFromStationNameExtractor(BaseEstimator, TransformerMixin):
             gps_coordinates = X.loc[idx, self.station_col].str.split(', ', n=1, expand=True)
             X.loc[idx, self.latitude_col] = gps_coordinates[0].astype('float')
             X.loc[idx, self.longitude_col] = gps_coordinates[1].astype('float')
+            X.loc[idx, self.station_col] = 'Poza oficjalną stacją'
 
         return X
