@@ -37,7 +37,7 @@ class BikeRentalRecords:
                       'Rental station', 'Return station', 'Duration']
 
         # Remove whitespace characters
-        df.replace(u'\xa0$', u'', regex=True, inplace=True)
+        df.replace(u'\xa0', u'', regex=True, inplace=True)
 
         # Remove leading and trailing whitespace characters
         df['Rental station'] = df['Rental station'].str.strip()
