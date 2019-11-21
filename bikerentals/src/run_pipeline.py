@@ -10,20 +10,19 @@ from bikerentals.src.utils.argparse import str2bool                       # noqa
 from bikerentals.src.utils.logging import logger                          # noqa: E402
 
 
-def execute_pipeline(account_name, account_key, bike_rental_data_container_name,
-                     raw_data_folder_path, processed_data_folder_path, hard_delete,
-                     save_base_name):
-    """
-    Execute entire pipeline: data loading, cleaning and feature engineering.
+def execute_pipeline(account_name: str, account_key: str, bike_rental_data_container_name: str,
+                     raw_data_folder_path: str, processed_data_folder_path: str, hard_delete: bool,
+                     save_base_name: str) -> None:
+    """Execute entire pipeline: data loading, cleaning and feature engineering.
 
-    Parameters:
-    * account_name - Azure Storage account name
-    * account_key - Azure Storage account key
-    * bike_rental_data_container_name - the name of storage container containing bike rental data
-    * raw_data_folder_path - the path to a folder with raw data to be processed
-    * processed_data_folder_path - the path to a folder where output file should be saved to
-    * hard_delete - delete records marked for deletion
-    * save_base_name - The output dataset file base name
+    Arguments:
+        account_name {str} -- Azure Storage account name
+        account_key {str} -- Azure Storage account key
+        bike_rental_data_container_name {str} -- The name of storage container containing bike rental data
+        raw_data_folder_path {str} -- the path to a folder with raw data to be processed
+        processed_data_folder_path {str} -- the path to a folder where output file should be saved to
+        hard_delete {bool} -- delete records marked for deletion
+        save_base_name {str} -- The output dataset file base name
     """
 
     data_prep_pipeline = DataPreparationPipeline(account_name, account_key,

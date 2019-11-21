@@ -5,10 +5,17 @@ from bikerentals.src.utils.logging import log_transformation
 
 
 class GpsFromStationNameExtractor(BaseEstimator, TransformerMixin):
+    """Extract GPS coordinates from the bike station name column.
+
+    Arguments:
+        station_col {str}
+            The name of the column containing information about bike station names.
+            This column will be analyzed to detect texts containing gps coordinates.
+        latitude_col {str} -- The column name with latitude coordinates.
+        longitude_col {str} -- The column name with longitude coordinates.
     """
-    Extract GPS coordinates from the bike station name column.
-    """
-    def __init__(self, station_col: str, latitude_col: str, longitude_col: str):
+
+    def __init__(self, station_col: str, latitude_col: str, longitude_col: str) -> None:
         self.station_col = station_col
         self.latitude_col = latitude_col
         self.longitude_col = longitude_col
