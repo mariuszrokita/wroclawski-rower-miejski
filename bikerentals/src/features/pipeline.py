@@ -7,6 +7,7 @@ from bikerentals.src.features.distance import DistanceFeature
 from bikerentals.src.features.holidays import HolidaysFeature
 from bikerentals.src.features.hour import HourFeature
 from bikerentals.src.features.month import MonthFeature
+from bikerentals.src.features.rental_fee import RentalFeeFeature
 from bikerentals.src.features.season import SeasonFeature
 from bikerentals.src.utils.logging import log_transformation
 
@@ -31,7 +32,8 @@ class DataFeaturization(BaseEstimator, TransformerMixin):
             HourFeature('Rental datetime', 'Rental hour'),
             MonthFeature('Rental datetime', 'Rental month'),
             DistanceFeature('Rental station latitude', 'Rental station longitude',
-                            'Return station latitude', 'Return station longitude', 'Distance')
+                            'Return station latitude', 'Return station longitude', 'Distance'),
+            RentalFeeFeature('Rental datetime', 'Return datetime', 'Rental fee')
         )
 
     def fit(self, X: pd.DataFrame, y=None) -> pd.DataFrame:
