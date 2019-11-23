@@ -92,26 +92,32 @@ stages:
 
   - stage: DeployAzureFunctionApp
     dependsOn: BuildAndPackageAzureFunctionApp
-    pool:
-      vmImage: 'ubuntu-latest'
     jobs:
-      - job: Deploy
-        steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifact: AzureFunctions-Python-build$(Build.BuildId)
-              targetPath: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
+      - deployment: DeployDev
+        displayName: Deploy Azure Function to Dev Env
+        pool:
+          vmImage: 'ubuntu-latest'
+        # creates an environment if it doesn't exist
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifact: AzureFunctions-Python-build$(Build.BuildId)
+                    targetPath: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
 
-          - task: AzureFunctionApp@1
-            displayName: 'Deploy Azure Function App'
-            inputs:
-              azureSubscription: '$(Parameters.AzureSubscription)'
-              appType: functionAppLinux
-              appName: '$(Parameters.AppName)'
-              package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
-              appSettings: '-historic_records_url $(historic_records_url)
-                            -storage_account_name $(storage_account_name)
-                            -storage_account_key $(storage_account_key)
-                            -bike_rentals_container_name $(bike_rentals_container_name)
-                            -bike_availability_data_url $(bike_availability_data_url)
-                            -bike_availability_container_name $(bike_availability_container_name)'
+                - task: AzureFunctionApp@1
+                  displayName: 'Deploy Azure Function App'
+                  inputs:
+                    azureSubscription: '$(Parameters.AzureSubscription)'
+                    appType: functionAppLinux
+                    appName: '$(Parameters.AppName)'
+                    package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
+                    appSettings: '-historic_records_url $(historic_records_url)
+                                  -storage_account_name $(storage_account_name)
+                                  -storage_account_key $(storage_account_key)
+                                  -bike_rentals_container_name $(bike_rentals_container_name)
+                                  -bike_availability_data_url $(bike_availability_data_url)
+                                  -bike_availability_container_name $(bike_availability_container_name)'
