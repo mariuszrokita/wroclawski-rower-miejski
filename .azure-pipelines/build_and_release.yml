@@ -7,7 +7,9 @@ trigger:
       - develop
 
 variables:
-  python.version: '3.6'
+  - group: dev-variable-group
+  - name: python.version
+    value: '3.6'
 
 stages:
   - stage: BuildEnvAndTestPythonCode
@@ -107,10 +109,9 @@ stages:
               appType: functionAppLinux
               appName: '$(Parameters.AppName)'
               package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
-              appSettings: '-historic_records_url $(dev.historic_records_url) 
-                            -storage_account_name $(dev.storage_account_name)
-                            -storage_account_key $(dev.storage_account_key)
-                            -bike_rentals_container_name $(dev.bike_rentals_container_name)
-                            -bike_availability_data_url $(dev.bike_availability_data_url)
-                            -bike_availability_container_name $(dev.bike_availability_container_name)'
-              runtimeStack: Python
+              appSettings: '-historic_records_url $(historic_records_url)
+                            -storage_account_name $(storage_account_name)
+                            -storage_account_key $(storage_account_key)
+                            -bike_rentals_container_name $(bike_rentals_container_name)
+                            -bike_availability_data_url $(bike_availability_data_url)
+                            -bike_availability_container_name $(bike_availability_container_name)'
