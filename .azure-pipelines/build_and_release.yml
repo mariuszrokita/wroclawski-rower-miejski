@@ -84,11 +84,11 @@ stages:
               inlineScript: 'func pack --python --build-native-deps'
               workingDirectory: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
 
-          - task: PublishBuildArtifacts@1
+          - task: PublishPipelineArtifact@1
             displayName: 'Publish Artifact'
             inputs:
-              PathtoPublish: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
-              ArtifactName: 'AzureFunctions-Python-build$(Build.BuildId)'
+              path: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
+              artifact: 'AzureFunctions-Python-build$(Build.BuildId)'
 
   - stage: DeployAzureFunctionApp
     dependsOn: BuildAndPackageAzureFunctionApp
