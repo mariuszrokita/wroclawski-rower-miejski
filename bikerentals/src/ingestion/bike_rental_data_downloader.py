@@ -16,6 +16,9 @@ class BikeRentalDataDownloader:
         generator = self.block_blob_service.list_blobs(self.container_name)
         blob_names = [blob.name for blob in generator]
 
+        # create folder if it doesn't exist yet
+        os.makedirs(target_folder, exist_ok=True)
+
         for name in blob_names:
             file_path = os.path.join(target_folder, name)
             if not os.path.exists(file_path):

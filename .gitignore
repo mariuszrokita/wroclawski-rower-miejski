@@ -6,5 +6,6 @@ __pycache__
 *.pyc
 
 */data/raw/*.csv
+*/data/raw/*.json
 */data/interim/*.csv
 */data/processed/*.csv
