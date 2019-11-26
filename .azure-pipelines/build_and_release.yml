@@ -7,7 +7,9 @@ trigger:
       - develop
 
 variables:
-  python.version: '3.6'
+  - group: dev-variable-group
+  - name: python.version
+    value: '3.6'
 
 stages:
   - stage: BuildEnvAndTestPythonCode
@@ -82,35 +84,40 @@ stages:
               inlineScript: 'func pack --python --build-native-deps'
               workingDirectory: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
 
-          - task: PublishBuildArtifacts@1
+          - task: PublishPipelineArtifact@1
             displayName: 'Publish Artifact'
             inputs:
-              PathtoPublish: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
-              ArtifactName: 'AzureFunctions-Python-build$(Build.BuildId)'
+              path: '$(System.DefaultWorkingDirectory)/data-importing/azurefunctions'
+              artifact: 'AzureFunctions-Python-build$(Build.BuildId)'
 
   - stage: DeployAzureFunctionApp
     dependsOn: BuildAndPackageAzureFunctionApp
-    pool:
-      vmImage: 'ubuntu-latest'
     jobs:
-      - job: Deploy
-        steps:
-          - task: DownloadPipelineArtifact@2
-            inputs:
-              artifact: AzureFunctions-Python-build$(Build.BuildId)
-              targetPath: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
+      - deployment: DeployDev
+        displayName: Deploy Azure Function to Dev Env
+        pool:
+          vmImage: 'ubuntu-latest'
+        # creates an environment if it doesn't exist
+        environment: dev
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifact: AzureFunctions-Python-build$(Build.BuildId)
+                    targetPath: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
 
-          - task: AzureFunctionApp@1
-            displayName: 'Deploy Azure Function App'
-            inputs:
-              azureSubscription: '$(Parameters.AzureSubscription)'
-              appType: functionAppLinux
-              appName: '$(Parameters.AppName)'
-              package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
-              appSettings: '-historic_records_url $(dev.historic_records_url) 
-                            -storage_account_name $(dev.storage_account_name)
-                            -storage_account_key $(dev.storage_account_key)
-                            -bike_rentals_container_name $(dev.bike_rentals_container_name)
-                            -bike_availability_data_url $(dev.bike_availability_data_url)
-                            -bike_availability_container_name $(dev.bike_availability_container_name)'
-              runtimeStack: Python
+                - task: AzureFunctionApp@1
+                  displayName: 'Deploy Azure Function App'
+                  inputs:
+                    azureSubscription: '$(Parameters.AzureSubscription)'
+                    appType: functionAppLinux
+                    appName: '$(Parameters.AppName)'
+                    package: '$(System.DefaultWorkingDirectory)/AzureFunctions-Python'
+                    appSettings: '-historic_records_url $(historic_records_url)
+                                  -storage_account_name $(storage_account_name)
+                                  -storage_account_key $(storage_account_key)
+                                  -bike_rentals_container_name $(bike_rentals_container_name)
+                                  -bike_availability_data_url $(bike_availability_data_url)
+                                  -bike_availability_container_name $(bike_availability_container_name)'
