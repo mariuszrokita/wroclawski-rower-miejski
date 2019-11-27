@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from bikeavailability.src.ingestion.bike_availability_data_downloader import BikeAvailabilityDataDownloader
+from bikeavailability.src.ingestion.bike_availability_records import BikeAvailabilityRecords
 from bikeavailability.src.utils.logging import log_transformation
 
 
@@ -30,11 +31,12 @@ class DataIngestion(BaseEstimator, TransformerMixin):
         return self
 
     @log_transformation(stage='DataIngestion', indent_level=1)
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame) -> (pd.DataFrame, [str]):
         # Download all bike rental data from Azure Blob Storage and save it locally
         blob_downloader = BikeAvailabilityDataDownloader(self.account_name, self.account_key,
                                                          self.container_name)
         blob_downloader.download_blobs_and_save(self.raw_data_folderpath)
 
-        # TODO: combine data and return dataframe
-        return pd.DataFrame()
+        # Read all local csv files with bike rental data and combine it into one dataframe
+        df, processed_filenames = BikeAvailabilityRecords(self.raw_data_folderpath).load_data()
+        return df, processed_filenames

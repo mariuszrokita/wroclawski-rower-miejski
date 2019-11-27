@@ -9,12 +9,12 @@ class BikeRentalRecords:
         self.source_folder = source_folder
 
     def load_data(self):
-        raw_data_df = self.__load_csv_files()
+        raw_data_df = self.__load_files()
         clean_data_df = self.__clean(raw_data_df)
         clean_data_df = self.__change_datatypes(clean_data_df)
         return clean_data_df
 
-    def __load_csv_files(self):
+    def __load_files(self):
         dfs = []
 
         # Get filenames and load data to

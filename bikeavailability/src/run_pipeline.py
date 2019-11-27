@@ -33,12 +33,12 @@ def execute_pipeline(account_name: str, account_key: str, container_name: str,
 
     # we're starting off our pipeline with no initiall data to process - we basically
     # need to ingest it first, and then process it.
-    df = data_prep_pipeline.transform(None)
+    df, processed_filenames = data_prep_pipeline.transform(None)
 
     # save as csv
-    save_dirname = os.path.join(processed_data_folder_path, '{}.csv'.format(save_base_name))
-    df.to_csv(save_dirname, index=False)
-    logger.info(f"Data saved to: {save_dirname}")
+    filename = os.path.join(processed_data_folder_path, '{}.csv'.format(save_base_name))
+    df.to_csv(filename, index=True)
+    logger.info(f"Data saved to: {filename}")
 
 
 if __name__ == "__main__":
