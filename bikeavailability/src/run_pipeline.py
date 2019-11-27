@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import os
 import sys
 
@@ -8,6 +9,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.getcwd(), '..', '..')))
 from bikeavailability.src.preparation.pipeline import DataPreparationPipeline  # noqa: E402
 from bikeavailability.src.utils.argparse import str2bool                       # noqa: E402
 from bikeavailability.src.utils.logging import logger                          # noqa: E402
+
+logging.getLogger("azure.storage.common.storageclient").setLevel(logging.WARNING)
 
 
 def execute_pipeline(account_name: str, account_key: str, container_name: str,
