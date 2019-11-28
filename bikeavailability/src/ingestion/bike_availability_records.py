@@ -35,9 +35,14 @@ class BikeAvailabilityRecords:
         return big_frame, processed_filenames
 
     def __clean(self, df):
-        # TODO: remove fraction of seconds from timestamp
+        # remove fractional part of seconds
+        df['timestamp'] = df['timestamp'].astype('datetime64[s]')
+
+        # Make it convenient for the English-speaking audience
+        df.columns = ['Available Bikes', 'Bike Station Number', 'Timestamp']
+
         return df
 
     def __change_datatypes(self, df):
-        df = df.set_index("timestamp")
+        df = df.set_index('Timestamp')
         return df

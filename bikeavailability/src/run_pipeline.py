@@ -40,6 +40,8 @@ def execute_pipeline(account_name: str, account_key: str, container_name: str,
     df.to_csv(filename, index=True)
     logger.info(f"Data saved to: {filename}")
 
+    # ! TODO: save list of processed filenames (and reused it during data ingestion)
+
 
 if __name__ == "__main__":
     # Construct documentation for the script parameters

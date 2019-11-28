@@ -39,4 +39,7 @@ class DataIngestion(BaseEstimator, TransformerMixin):
 
         # Read all local csv files with bike rental data and combine it into one dataframe
         df, processed_filenames = BikeAvailabilityRecords(self.raw_data_folderpath).load_data()
+
+        # ! TODO: combine bike station numbers with bike station names
+
         return df, processed_filenames
