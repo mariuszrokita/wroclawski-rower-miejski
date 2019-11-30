@@ -2,6 +2,8 @@ import os
 
 from azure.storage.blob import BlockBlobService
 
+from bikeavailability.src.utils.logging import logger
+
 # ! TODO: a duplicate of the BikeRentalDataDownloader:
 
 
@@ -33,4 +35,5 @@ class BikeAvailabilityDataDownloader:
         for name in blob_names:
             file_path = os.path.join(target_folder, name)
             if not os.path.exists(file_path):
+                logger.info(f"Downloading file {file_path}")
                 self.block_blob_service.get_blob_to_path(self.container_name, name, file_path)

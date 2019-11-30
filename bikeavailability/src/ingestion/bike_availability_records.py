@@ -3,24 +3,62 @@ import glob
 import os
 import pandas as pd
 
+from bikeavailability.src.utils.io import load_dataframe
+
 
 class BikeAvailabilityRecords:
 
-    def __init__(self, source_folder):
-        self.source_folder = source_folder
+    def __init__(self):
+        self.PROCESSED_DATA_COLUMNS = ['Timestamp', 'Available Bikes', 'Bike Station Number']
+        self.PROCESSED_FILES_COLUMNS = ['Filename']
 
-    def load_data(self) -> (pd.DataFrame, [str]):
-        raw_data_df, processed_filenames = self.__load_files()
-        clean_data_df = self.__clean(raw_data_df)
-        clean_data_df = self.__change_datatypes(clean_data_df)
-        return clean_data_df, processed_filenames
+    def load(self, raw_data_folderpath: str, processed_data_folder_path: str,
+             processed_data_base_name: str, processed_files_base_name: str) -> (pd.DataFrame, pd.DataFrame):
+        # Explanation:
+        # In order to save time and due to immutability of data in json files, we can read
+        # previously loaded data and process only new json files.
 
-    def __load_files(self):
-        # list of files already read and processed
-        processed_filenames = []
-        big_frame = pd.DataFrame(data=[], columns=['bikes', 'number', 'timestamp'])
+        # Load list of files already processed
+        processed_filenames_df = load_dataframe(processed_data_folder_path,
+                                                processed_files_base_name,
+                                                self.PROCESSED_FILES_COLUMNS)
 
-        for filename in sorted(glob.glob(os.path.join(self.source_folder, '*.json'))):
+        # Get list of all available raw data files
+        available_raw_files = self._get_available_raw_files_list(raw_data_folderpath)
+
+        # Determine what new json files we should load data from
+        processed_filenames = processed_filenames_df[self.PROCESSED_FILES_COLUMNS[0]]
+        filenames_to_load = set(available_raw_files) - set(processed_filenames)
+
+        # Just load new data and clean it
+        raw_data_df = self._load_files(filenames_to_load)
+        clean_data_df = self._clean(raw_data_df)
+
+        # Load previous data and combine it with fresh data
+        processed_data_df = load_dataframe(processed_data_folder_path,
+                                           processed_data_base_name,
+                                           self.PROCESSED_DATA_COLUMNS,
+                                           parse_dates=[self.PROCESSED_DATA_COLUMNS[0]])
+        data_df = processed_data_df.append(clean_data_df)
+        data_df = data_df.sort_values(by=data_df.columns[0])
+
+        # Update list of processed files
+        newly_processed_filenames_df = pd.DataFrame(data=filenames_to_load,
+                                                    columns=self.PROCESSED_FILES_COLUMNS)
+        processed_filenames_df = processed_filenames_df.append(newly_processed_filenames_df)
+        processed_filenames_df = processed_filenames_df.sort_values(by=processed_filenames_df.columns[0])
+
+        return data_df, processed_filenames_df
+
+    def _get_available_raw_files_list(self, raw_data_folderpath):
+        return sorted(glob.glob(os.path.join(raw_data_folderpath, '*.json')))
+
+    def _load_files(self, filenames_to_load):
+        RAW_DF_COLUMNS = ['timestamp', 'bikes', 'number']
+
+        big_frame = pd.DataFrame(data=[], columns=RAW_DF_COLUMNS)
+
+        for filename in filenames_to_load:
             # load json file
             with open(filename) as json_file:
                 data = json.load(json_file)
@@ -29,20 +67,16 @@ class BikeAvailabilityRecords:
                 # make dataframe from a single json
                 records_df = pd.DataFrame(data=data['result']['records'])
                 records_df['timestamp'] = data['datetime']
-                big_frame = pd.concat([big_frame, records_df], sort=True, ignore_index=True)
-                processed_filenames.append(os.path.basename(filename))
+                # reorder columns
+                records_df = records_df[RAW_DF_COLUMNS]
+                big_frame = big_frame.append(records_df)
+        return big_frame
 
-        return big_frame, processed_filenames
-
-    def __clean(self, df):
+    def _clean(self, df):
         # remove fractional part of seconds
         df['timestamp'] = df['timestamp'].astype('datetime64[s]')
 
         # Make it convenient for the English-speaking audience
-        df.columns = ['Available Bikes', 'Bike Station Number', 'Timestamp']
+        df.columns = self.PROCESSED_DATA_COLUMNS
 
-        return df
-
-    def __change_datatypes(self, df):
-        df = df.set_index('Timestamp')
         return df
