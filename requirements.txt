@@ -9,3 +9,6 @@ flake8
 geopy
 rope # refactoring
 streamlit
+
+azureml-sdk
+python-dotenv
