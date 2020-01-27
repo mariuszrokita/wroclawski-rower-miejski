@@ -24,14 +24,14 @@ class BikeAvailabilityRecords:
                                                 self.PROCESSED_FILES_COLUMNS)
 
         # Get list of all available raw data files
-        available_raw_files = self._get_available_raw_files_list(raw_data_folderpath)[:10]
+        available_raw_files = self._get_available_raw_files_list(raw_data_folderpath)
 
         # Determine what new json files we should load data from
         processed_filenames = processed_filenames_df[self.PROCESSED_FILES_COLUMNS[0]]
         filenames_to_load = set(available_raw_files) - set(processed_filenames)
 
         # Just load new data and clean it
-        raw_data_df = self._load_files(filenames_to_load)
+        raw_data_df = self._load_files(raw_data_folderpath, filenames_to_load)
         clean_data_df = self._clean(raw_data_df)
 
         # Load previous data and combine it with fresh data
@@ -51,17 +51,18 @@ class BikeAvailabilityRecords:
         return data_df, processed_filenames_df
 
     def _get_available_raw_files_list(self, raw_data_folderpath):
-        return sorted(glob.glob(os.path.join(raw_data_folderpath, '*.json')))
+        # return filenames only (without full paths)
+        return sorted([os.path.basename(x) for x in glob.glob(os.path.join(raw_data_folderpath, '*.json'))])
 
-    def _load_files(self, filenames_to_load):
+    def _load_files(self, raw_data_folderpath, filenames_to_load):
         RAW_DF_COLUMNS = ['timestamp', 'bikes', 'number']
 
         big_frame = pd.DataFrame(data=[], columns=RAW_DF_COLUMNS)
 
         for filename in filenames_to_load:
             # load json file
-            with open(filename) as json_file:
-                data = json.load(json_file)
+            with open(os.path.join(raw_data_folderpath, filename)) as handle:
+                data = json.load(handle)
 
             if data['success'] is True:
                 # make dataframe from a single json

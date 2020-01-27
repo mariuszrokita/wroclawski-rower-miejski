@@ -21,6 +21,7 @@ print_nicely("Argument 3: %s" % args.intermediate_data_loc)
 
 input_data_folder = args.input_data_loc
 processed_data_folder = os.path.join(args.intermediate_data_loc, "intermediate")
+print(f"processed_data_folder: {processed_data_folder}")
 processed_data_base_name = "bike_availability_data"
 processed_files_base_name = "processed_files"
 
@@ -35,11 +36,9 @@ data_df, processed_filenames_df = bar.load(
 
 print("Data summary:")
 print(data_df.info())
-print(data_df)
 
 print("List of ingested raw data files:")
 print(processed_filenames_df.info())
-print(processed_filenames_df)
 
 print("Writing files to output data folder..")
 save_dataframe(data_df, processed_data_folder, processed_data_base_name)
