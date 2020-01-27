@@ -2,41 +2,46 @@ import argparse
 import glob
 import os
 
-from util import print_nicely
+
+from bike_availability_records import BikeAvailabilityRecords
+from utils import print_nicely, save_dataframe
+
 
 print_nicely("Inside ingest.py file")
 
 parser = argparse.ArgumentParser("ingest")
-parser.add_argument("--input_data", type=str, help="Location of the raw input data")
-parser.add_argument("--output_ingest", type=str, help="Output directory of the pipeline step")
-parser.add_argument("--converted_data_location", type=str, help="Location of the csv data (after json file conversion)")
+parser.add_argument("--input_data_loc", type=str, help="Location of the raw input data")
+parser.add_argument("--output_data_loc", type=str, help="Output directory of the pipeline step")
+parser.add_argument("--intermediate_data_loc", type=str, help="Location of the csv data (after json file conversion)")
 args = parser.parse_args()
 
-print_nicely("Argument 1: %s" % args.input_data)
-print_nicely("Argument 2: %s" % args.output_ingest)
-print_nicely("Argument 3: %s" % args.converted_data_location)
+print_nicely("Argument 1: %s" % args.input_data_loc)
+print_nicely("Argument 2: %s" % args.output_data_loc)
+print_nicely("Argument 3: %s" % args.intermediate_data_loc)
 
+input_data_folder = args.input_data_loc
+processed_data_folder = os.path.join(args.intermediate_data_loc, "intermediate")
+processed_data_base_name = "bike_availability_data"
+processed_files_base_name = "processed_files"
 
-input_data = args.input_data
+os.makedirs(processed_data_folder, exist_ok=True)
 
-print("Check what files are available in the source location..")
-processed_files = []
-for file in glob.glob(os.path.join(input_data, '*.*')):
-    print(file)
-    processed_files.extend([os.path.basename(file)])
+bar = BikeAvailabilityRecords()
+data_df, processed_filenames_df = bar.load(
+    raw_data_folderpath=input_data_folder,
+    processed_data_folder_path=processed_data_folder,
+    processed_data_base_name=processed_data_base_name,
+    processed_files_base_name=processed_files_base_name)
 
-# if not (args.output_ingest is None):
-#     os.makedirs(args.output_ingest, exist_ok=True)
-#     print_nicely("%s created" % args.output_ingest)
+print("Data summary:")
+print(data_df.info())
+print(data_df)
 
-# # write to pipeline output location
-# with open(os.path.join(args.output_ingest, 'processed_files.csv'), 'w') as f:
-#     for item in processed_files:
-#         f.write(f"{item}\n")
+print("List of ingested raw data files:")
+print(processed_filenames_df.info())
+print(processed_filenames_df)
 
-intermediate_data_path = os.path.join(args.converted_data_location, 'intermediate')
-os.makedirs(intermediate_data_path, exist_ok=True)
-
-with open(os.path.join(intermediate_data_path, 'processed_files.csv'), 'w') as f:
-    for item in processed_files:
-        f.write(f"{item}\n")
+print("Writing files to output data folder..")
+save_dataframe(data_df, processed_data_folder, processed_data_base_name)
+save_dataframe(processed_filenames_df, processed_data_folder, processed_files_base_name)
+print("Done!")

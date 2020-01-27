@@ -113,9 +113,9 @@ def create_step_ingest_and_convert(input_data_loc, intermediate_data_loc, output
     step = PythonScriptStep(
         name="Ingest json files and convert to csv",
         script_name="ingest.py",
-        arguments=["--input", input_data_loc,
-                   "--output", output_data,
-                   "--converted_data_location", intermediate_data_loc],
+        arguments=["--input_data_loc", input_data_loc,
+                   "--output_data_loc", output_data,
+                   "--intermediate_data_loc", intermediate_data_loc],
         inputs=[input_data_loc, intermediate_data_loc],
         outputs=[output_data],
         compute_target=compute_target,
