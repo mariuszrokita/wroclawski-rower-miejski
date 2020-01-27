@@ -1,5 +1,5 @@
-import json
 import glob
+import json
 import os
 import pandas as pd
 
@@ -80,5 +80,4 @@ class BikeAvailabilityRecords:
 
         # Make it convenient for the English-speaking audience
         df.columns = self.PROCESSED_DATA_COLUMNS
-
         return df

@@ -109,7 +109,6 @@ def set_up_output_datastore(workspace, account_name, account_key, container_name
 def create_step_ingest_and_convert(input_data_loc, intermediate_data_loc, output_data, compute_target):
     source_directory = 'ingestion'
     print(f"Source directory for the step is {os.path.realpath(source_directory)}.")
-    # TODO: The converted csv file should be copied to a known 'fix' location.
     step = PythonScriptStep(
         name="Ingest json files and convert to csv",
         script_name="ingest.py",
@@ -189,7 +188,7 @@ if __name__ == "__main__":
         output_data=pipeline_data,
         compute_target=compute_target)
 
-    # finally, create pipeline and publish it
+    # Finally, create pipeline and publish it
     # TODO: Is there any way to 'update' existing pipeline, instead of creating a new one?
     print("\nSTEP 7")
     print("Creating pipeline...")

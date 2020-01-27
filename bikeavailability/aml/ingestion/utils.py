@@ -2,10 +2,6 @@ import os
 import pandas as pd
 
 
-def print_nicely(message):
-    print(f"*** {message}")
-
-
 def save_dataframe(df, path, filename):
     full_filepath = os.path.join(path, '{}.csv'.format(filename))
     df.to_csv(full_filepath, index=False)
