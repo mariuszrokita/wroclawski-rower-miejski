@@ -61,6 +61,7 @@ class BikeAvailabilityRecords:
 
         for filename in filenames_to_load:
             # load json file
+            print(f"Loading data from file: {filename}")
             with open(os.path.join(raw_data_folderpath, filename)) as handle:
                 data = json.load(handle)
 
