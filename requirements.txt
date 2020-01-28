@@ -10,5 +10,5 @@ geopy
 rope # refactoring
 streamlit
 
-azureml-sdk
+azureml-sdk==1.0.85
 python-dotenv

@@ -1,10 +1,11 @@
 import azureml.core
 import os
 
-from azureml.core import Datastore, Experiment, Workspace
+from azureml.core import Datastore, Workspace
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.data.data_reference import DataReference
 from azureml.pipeline.core import Pipeline, PipelineData
+from azureml.pipeline.core.schedule import Schedule, ScheduleRecurrence
 from azureml.pipeline.steps import PythonScriptStep
 from dotenv import load_dotenv
 
@@ -50,7 +51,7 @@ def create_compute_target(workspace):
         provisioning_config = AmlCompute.provisioning_configuration(vm_size=vm_size,
                                                                     min_nodes=0,
                                                                     max_nodes=4,
-                                                                    idle_seconds_before_scaledown=900)
+                                                                    idle_seconds_before_scaledown=300)
         # create the compute target
         compute_target = ComputeTarget.create(ws, compute_name, provisioning_config)
 
@@ -115,6 +116,10 @@ def create_step_ingest_and_convert(input_data_loc, intermediate_data_loc, output
         arguments=["--input_data_loc", input_data_loc,
                    "--output_data_loc", output_data,
                    "--intermediate_data_loc", intermediate_data_loc],
+        # The intermediate_data_loc parameter indicates a location that in fact in the output location.
+        # The result of a script execution will be saved there. However, it had to be declared as
+        # input parameter, because a type of this parameter (DataReference) cannot be accepted as output
+        # by the PythonScriptStep class (have a look at a documentation for the PythonScriptStep class).
         inputs=[input_data_loc, intermediate_data_loc],
         outputs=[output_data],
         compute_target=compute_target,
@@ -174,10 +179,10 @@ if __name__ == "__main__":
 
     # Default datastore to exchange data between pipeline steps
     print("\nSTEP 5")
-    print("Creating datastore used to exchange data between pipeline steps")
+    print("Creating a datastore used to exchange data between pipeline steps")
     pipeline_datastore = ws.get_default_datastore()
 
-    print("Creating pipeline data object (for data exchanged between pipeline steps)")
+    print("Creating a pipeline data object (for data exchanged between pipeline steps)")
     pipeline_data = PipelineData("pipeline_data", datastore=pipeline_datastore)
 
     # Create pipeline steps
@@ -191,14 +196,13 @@ if __name__ == "__main__":
     # Finally, create pipeline and publish it
     # TODO: Is there any way to 'update' existing pipeline, instead of creating a new one?
     print("\nSTEP 7")
-    print("Creating pipeline...")
+    print("Creating a pipeline...")
     pipeline_steps = [ingest_step]
     pipeline = Pipeline(workspace=ws, steps=[pipeline_steps])
     print("done!")
 
-    # TODO: Let the data preparation pipeline be executed in the scheduled manner
     print("\nSTEP 8")
-    print("Publishing pipeline...")
+    print("Publishing the pipeline...")
     published_pipeline = pipeline.publish(
         name="Data Preparation Pipeline",
         description="Data Preparation PipelineDescription",
@@ -206,6 +210,13 @@ if __name__ == "__main__":
     print("done!")
 
     print("\nSTEP 9")
-    print("Submitting pipeline...")
-    experiment = Experiment(ws, 'Data_Preparation_Pipeline')
-    pipeline_run = experiment.submit(published_pipeline, regenerate_outputs=False)
+    print("Creating a schedule for the pipeline...")
+    # Submit the pipeline every day at 5:05 AM and 20:05 PM.
+    recurrence = ScheduleRecurrence(frequency="Day", interval=3, hours=[5, 8, 20], minutes=[5])
+    recurring_schedule = Schedule.create(
+        ws,
+        name="MyRecurringSchedule",
+        description="Based on time",
+        pipeline_id=published_pipeline.id,
+        experiment_name='Data_Preparation_Pipeline',
+        recurrence=recurrence)

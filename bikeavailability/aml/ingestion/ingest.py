@@ -34,11 +34,14 @@ data_df, processed_filenames_df = BikeAvailabilityRecords().load(
     processed_data_base_name=processed_data_base_name,
     processed_files_base_name=processed_files_base_name)
 
-print("Data summary:")
+print("Data summary and last records:")
 print(data_df.info())
+print(data_df.tail())
+
 
 print("List of ingested raw data files:")
 print(processed_filenames_df.info())
+print(processed_filenames_df.tail())
 
 print("Writing files to output data folder..")
 save_dataframe(data_df, processed_data_folder, processed_data_base_name)
