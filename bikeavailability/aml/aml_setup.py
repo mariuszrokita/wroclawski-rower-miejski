@@ -4,7 +4,7 @@ import os
 from azureml.core import Datastore, Workspace
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.data.data_reference import DataReference
-from azureml.pipeline.core import Pipeline, PipelineData
+from azureml.pipeline.core import Pipeline, PipelineData, PublishedPipeline
 from azureml.pipeline.core.schedule import Schedule, ScheduleRecurrence
 from azureml.pipeline.steps import PythonScriptStep
 from dotenv import load_dotenv
@@ -202,6 +202,15 @@ if __name__ == "__main__":
     print("done!")
 
     print("\nSTEP 8")
+    print("Deactivation of all previous pipelines...")
+    for schedule in Schedule.list(workspace=ws):
+        schedule.disable()
+
+    for published_pipeline in PublishedPipeline.list(workspace=ws):
+        published_pipeline.disable()
+    print("done!")
+
+    print("\nSTEP 9")
     print("Publishing the pipeline...")
     published_pipeline = pipeline.publish(
         name="Data Preparation Pipeline",
@@ -209,10 +218,10 @@ if __name__ == "__main__":
         continue_on_step_failure=True)
     print("done!")
 
-    print("\nSTEP 9")
+    print("\nSTEP 10")
     print("Creating a schedule for the pipeline...")
-    # Submit the pipeline every day at 5:05 AM and 20:05 PM.
-    recurrence = ScheduleRecurrence(frequency="Day", interval=3, hours=[5, 8, 20], minutes=[5])
+    # run every 12 hours
+    recurrence = ScheduleRecurrence(frequency="Hour", interval=12)
     recurring_schedule = Schedule.create(
         ws,
         name="MyRecurringSchedule",
@@ -220,3 +229,4 @@ if __name__ == "__main__":
         pipeline_id=published_pipeline.id,
         experiment_name='Data_Preparation_Pipeline',
         recurrence=recurrence)
+    print("done!")
