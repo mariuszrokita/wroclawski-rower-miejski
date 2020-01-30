@@ -124,7 +124,8 @@ def create_step_ingest_and_convert(input_data_loc, intermediate_data_loc, output
         outputs=[output_data],
         compute_target=compute_target,
         source_directory=source_directory,
-        allow_reuse=True)
+        allow_reuse=False  # process new raw data files every time the step is executed
+    )
     print("Step created!")
     return step
 
@@ -221,7 +222,7 @@ if __name__ == "__main__":
     print("\nSTEP 10")
     print("Creating a schedule for the pipeline...")
     # run every 12 hours
-    recurrence = ScheduleRecurrence(frequency="Hour", interval=12)
+    recurrence = ScheduleRecurrence(frequency="Hour", interval=2)
     recurring_schedule = Schedule.create(
         ws,
         name="MyRecurringSchedule",
