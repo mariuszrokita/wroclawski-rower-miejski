@@ -48,10 +48,11 @@ def create_compute_target(workspace):
             print('Found compute target: ' + compute_name)
     else:
         print('Creating a new compute target...')
-        provisioning_config = AmlCompute.provisioning_configuration(vm_size=vm_size,
-                                                                    min_nodes=0,
-                                                                    max_nodes=4,
-                                                                    idle_seconds_before_scaledown=300)
+        provisioning_config = AmlCompute.provisioning_configuration(
+            vm_size=vm_size,
+            min_nodes=0,
+            max_nodes=4,
+            idle_seconds_before_scaledown=60)
         # create the compute target
         compute_target = ComputeTarget.create(ws, compute_name, provisioning_config)
 
@@ -163,7 +164,7 @@ if __name__ == "__main__":
     print("Creating reference to raw input data...")
     input_data_ref = DataReference(
         datastore=input_datastore,
-        data_reference_name="raw_data")
+        data_reference_name="INPUT_bikeavailability_raw_json_data")
     print("done!")
 
     # Datastore that should store data available to all pipeline steps
@@ -176,7 +177,7 @@ if __name__ == "__main__":
 
     converted_data_ref = DataReference(
         datastore=output_datastore,
-        data_reference_name="converted_data")
+        data_reference_name="OUTPUT_bikeavailability_data_converted_to_csv")
 
     # Default datastore to exchange data between pipeline steps
     print("\nSTEP 5")
@@ -221,8 +222,8 @@ if __name__ == "__main__":
 
     print("\nSTEP 10")
     print("Creating a schedule for the pipeline...")
-    # run every 12 hours
-    recurrence = ScheduleRecurrence(frequency="Hour", interval=2)
+    # run every 20 Minutes - just to debug problem
+    recurrence = ScheduleRecurrence(frequency="Minute", interval=20)
     recurring_schedule = Schedule.create(
         ws,
         name="MyRecurringSchedule",
