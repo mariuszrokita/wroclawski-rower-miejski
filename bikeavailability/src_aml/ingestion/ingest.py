@@ -2,7 +2,7 @@ import argparse
 import os
 
 from bike_availability_records import BikeAvailabilityRecords
-from utils import save_dataframe
+from utils import save_dataframe, save_dataframe_as_pipeline_data
 
 
 print("Inside ingest.py file")
@@ -38,12 +38,14 @@ print("Data summary and last records:")
 print(data_df.info())
 print(data_df.tail())
 
-
 print("List of ingested raw data files:")
 print(processed_filenames_df.info())
 print(processed_filenames_df.tail())
 
-print("Writing files to output data folder..")
+print("Writing files to intermediate data folder..")
 save_dataframe(data_df, processed_data_folder, processed_data_base_name)
 save_dataframe(processed_filenames_df, processed_data_folder, processed_files_base_name)
+
+print("Writing a single data file to 'pipeline data' output folder to be consumed in another step")
+save_dataframe_as_pipeline_data(data_df, args.output_data_loc)
 print("Done!")

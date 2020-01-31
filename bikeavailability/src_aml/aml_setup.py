@@ -131,6 +131,24 @@ def create_step_ingest_and_convert(input_data_loc, intermediate_data_loc, output
     return step
 
 
+def create_step_clean(input_data_loc, output_data_loc, compute_target):
+    source_directory = "cleaning"
+    print(f"Source directory for the step is {os.path.realpath(source_directory)}.")
+    step = PythonScriptStep(
+        name="Data cleaning",
+        script_name="clean.py",
+        arguments=["--input_cleaning", ingestion_output_pipeline_data,
+                   "--output_cleaning", cleaning_output_pipeline_data],
+        inputs=[ingestion_output_pipeline_data],
+        outputs=[cleaning_output_pipeline_data],
+        compute_target=compute_target,
+        source_directory=source_directory,
+        allow_reuse=False
+    )
+    print("Step created!")
+    return step
+
+
 if __name__ == "__main__":
     # load environment variables
     load_dotenv()
@@ -185,21 +203,35 @@ if __name__ == "__main__":
     pipeline_datastore = ws.get_default_datastore()
 
     print("Creating a pipeline data object (for data exchanged between pipeline steps)")
-    pipeline_data = PipelineData("pipeline_data", datastore=pipeline_datastore)
+    ingestion_output_pipeline_data = PipelineData(
+        name="ingestion_output_pipeline_data",
+        data_type="csv",
+        datastore=pipeline_datastore,
+        is_directory=False)  # single file
+    cleaning_output_pipeline_data = PipelineData(
+        name="cleaning_output_pipeline_data",
+        data_type="csv",
+        datastore=pipeline_datastore,
+        is_directory=False)  # singe file
 
     # Create pipeline steps
     print("\nSTEP 6")
-    ingest_step = create_step_ingest_and_convert(
+    step_ingest = create_step_ingest_and_convert(
         input_data_loc=input_data_ref,
         intermediate_data_loc=converted_data_ref,
-        output_data=pipeline_data,
+        output_data=ingestion_output_pipeline_data,
+        compute_target=compute_target)
+
+    step_cleaning = create_step_clean(
+        input_data_loc=ingestion_output_pipeline_data,
+        output_data_loc=cleaning_output_pipeline_data,
         compute_target=compute_target)
 
     # Finally, create pipeline and publish it
     # TODO: Is there any way to 'update' existing pipeline, instead of creating a new one?
     print("\nSTEP 7")
     print("Creating a pipeline...")
-    pipeline_steps = [ingest_step]
+    pipeline_steps = [step_ingest, step_cleaning]
     pipeline = Pipeline(workspace=ws, steps=[pipeline_steps])
     print("done!")
 
@@ -222,8 +254,8 @@ if __name__ == "__main__":
 
     print("\nSTEP 10")
     print("Creating a schedule for the pipeline...")
-    # run every 20 Minutes - just to debug problem
-    recurrence = ScheduleRecurrence(frequency="Minute", interval=20)
+    # run every 6 hours
+    recurrence = ScheduleRecurrence(frequency="Hour", interval=6)
     recurring_schedule = Schedule.create(
         ws,
         name="MyRecurringSchedule",
