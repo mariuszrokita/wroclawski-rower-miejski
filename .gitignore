@@ -7,5 +7,6 @@ __pycache__
 
 */data/raw/*.csv
 */data/raw/*.json
-*/data/interim/*.csv
-*/data/processed/*.csv
+*/data/interim/
+*/data/processed/
+.azureml/

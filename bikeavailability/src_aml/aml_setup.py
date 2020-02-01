@@ -137,10 +137,10 @@ def create_step_clean(input_data_loc, output_data_loc, compute_target):
     step = PythonScriptStep(
         name="Data cleaning",
         script_name="clean.py",
-        arguments=["--input_cleaning", ingestion_output_pipeline_data,
-                   "--output_cleaning", cleaning_output_pipeline_data],
-        inputs=[ingestion_output_pipeline_data],
-        outputs=[cleaning_output_pipeline_data],
+        arguments=["--input_cleaning", input_data_loc,
+                   "--output_cleaning", output_data_loc],
+        inputs=[input_data_loc],
+        outputs=[output_data_loc],
         compute_target=compute_target,
         source_directory=source_directory,
         allow_reuse=False
@@ -166,6 +166,7 @@ if __name__ == "__main__":
     # Create an Azure Machine Learning service workspace
     print("\nSTEP 1")
     ws = create_workspace(subscription_id, resource_group, region, workspace_name)
+    ws.write_config()
 
     # Create a computer target
     print("\nSTEP 2")
