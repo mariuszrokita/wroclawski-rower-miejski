@@ -205,12 +205,10 @@ if __name__ == "__main__":
     print("Creating a pipeline data object (for data exchanged between pipeline steps)")
     ingestion_output_pipeline_data = PipelineData(
         name="ingestion_output_pipeline_data",
-        data_type="csv",
         datastore=pipeline_datastore,
         is_directory=False)  # single file
     cleaning_output_pipeline_data = PipelineData(
         name="cleaning_output_pipeline_data",
-        data_type="csv",
         datastore=pipeline_datastore,
         is_directory=False)  # singe file
 
@@ -249,7 +247,7 @@ if __name__ == "__main__":
     published_pipeline = pipeline.publish(
         name="Data Preparation Pipeline",
         description="Data Preparation PipelineDescription",
-        continue_on_step_failure=True)
+        continue_on_step_failure=False)
     print("done!")
 
     print("\nSTEP 10")
