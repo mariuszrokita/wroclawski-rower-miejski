@@ -49,9 +49,10 @@ for period in missing_data_periods:
 
 
 # STEP 3
-# Remove records marked for removal
+# Remove records marked for removal, and then the column itself
 idx = df[df['Delete'] == True].index
 df = df.drop(idx, axis=0)
+df = df.drop(['Delete'], axis=1)
 
 print("Writing a single data file to 'pipeline data' output folder to be consumed in another step")
 df.to_csv(args.output_cleaning, index=True)
