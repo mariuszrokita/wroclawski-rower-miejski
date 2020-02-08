@@ -149,6 +149,24 @@ def create_step_clean(input_data_loc, output_data_loc, compute_target):
     return step
 
 
+def create_step_featurization(input_data_loc, output_data_loc, compute_target):
+    source_directory = "featurization"
+    print(f"Source directory for the step is {os.path.realpath(source_directory)}.")
+    step = PythonScriptStep(
+        name="Data featurization",
+        script_name="featurization.py",
+        arguments=["--input_featurization", input_data_loc,
+                   "--output_featurization", output_data_loc],
+        inputs=[input_data_loc],
+        outputs=[output_data_loc],
+        compute_target=compute_target,
+        source_directory=source_directory,
+        allow_reuse=False
+    )
+    print("Step created!")
+    return step
+
+
 if __name__ == "__main__":
     # load environment variables
     load_dotenv()
@@ -212,6 +230,10 @@ if __name__ == "__main__":
         name="cleaning_output_pipeline_data",
         datastore=pipeline_datastore,
         is_directory=False)  # singe file
+    featurization_output_pipeline_data = PipelineData(
+        name="featurization_output_pipeline_data",
+        datastore=pipeline_datastore,
+        is_directory=False)  # singe file
 
     # Create pipeline steps
     print("\nSTEP 6")
@@ -226,11 +248,16 @@ if __name__ == "__main__":
         output_data_loc=cleaning_output_pipeline_data,
         compute_target=compute_target)
 
+    step_featurization = create_step_featurization(
+        input_data_loc=cleaning_output_pipeline_data,
+        output_data_loc=featurization_output_pipeline_data,
+        compute_target=compute_target)
+
     # Finally, create pipeline and publish it
     # TODO: Is there any way to 'update' existing pipeline, instead of creating a new one?
     print("\nSTEP 7")
     print("Creating a pipeline...")
-    pipeline_steps = [step_ingest, step_cleaning]
+    pipeline_steps = [step_ingest, step_cleaning, step_featurization]
     pipeline = Pipeline(workspace=ws, steps=[pipeline_steps])
     print("done!")
 
